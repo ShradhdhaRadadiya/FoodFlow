@@ -163,7 +163,7 @@ Secondary Flows:
    - **Allowed offline**: Browse restaurants/menus, search, filter, toggle favourites, add/edit/remove cart items, apply cached coupons, inspect past orders and receipts.
    - **Safely blocked offline**: Order confirmation and payment settlement require authoritative server verification so an offline device never falsely displays an order as confirmed.
 
----
+----
 
 ## 7. Background Sync Workflow (Transactional Outbox + WorkManager)
 
