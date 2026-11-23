@@ -1,0 +1,1272 @@
+PROJECT: FoodFlow – Production-Quality Food Delivery Android Application
+
+Act as a Senior Android Architect, Kotlin Multiplatform/Android Engineer, Jetpack Compose UI/UX Designer, and Software Testing Engineer.
+
+Your responsibility is to design and implement a complete, professional-quality Android food delivery application called FoodFlow, inspired by the customer experiences of Swiggy, Zomato, EatSure and other modern food delivery platforms.
+
+This application is being developed as a technical assessment for a Senior Android Developer position.
+
+The project must demonstrate:
+
+- Strong Kotlin programming skills.
+- Advanced Android development knowledge.
+- Clean Architecture.
+- MVI architecture.
+- Jetpack Compose.
+- Offline-first architecture.
+- Reliable local-to-remote data synchronization.
+- Coroutines and Flow.
+- Room database.
+- WorkManager.
+- Retrofit-style API abstraction.
+- WebSocket-based real-time order updates.
+- Error handling and recovery.
+- High-quality UI/UX.
+- Testable and maintainable code.
+- Practical problem-solving.
+
+I do not have an actual backend. Therefore, implement a complete local mock backend that simulates server APIs, payment processing, restaurant behaviour, delivery partner behaviour and WebSocket events.
+
+Do not leave core functionality as TODOs or non-functional placeholder screens.
+
+---
+
+1. IMPORTANT DEVELOPMENT RULES
+
+Follow these rules throughout the implementation.
+
+1. Use Kotlin as the primary programming language.
+2. Use Jetpack Compose for the entire application UI.
+3. Follow Clean Architecture and MVI strictly.
+4. Use Hilt for dependency injection.
+5. Use Room as the local database and source of truth for UI data.
+6. Use Coroutines, Flow, StateFlow and SharedFlow appropriately.
+7. Use WorkManager for reliable deferred synchronization.
+8. Implement a local mock backend; do not require a real server.
+9. Implement a simulated WebSocket event system for order tracking.
+10. Handle online, offline, timeout, duplicate requests and recovery scenarios.
+11. Provide realistic mock data.
+12. Implement proper loading, success, error, empty and offline states.
+13. Make every major screen functional and navigable.
+14. Use reusable Compose components and a consistent design system.
+15. Include meaningful code comments explaining important architectural and business decisions.
+16. Avoid unnecessary complexity, duplicated code and overengineering.
+17. Do not use deprecated Android APIs.
+18. Do not invent library versions. Use mutually compatible stable dependency versions and a Gradle version catalog.
+19. Ensure all imports, dependencies, navigation routes, DI bindings, database migrations and manifest declarations are correct.
+20. Do not claim the application builds successfully unless the project has actually been compiled and checked.
+
+If a requirement is ambiguous, choose a reasonable production-oriented implementation and document the decision.
+
+2. TECHNOLOGY STACK
+
+Use the following stack:
+
+- Language: Kotlin
+- UI: Jetpack Compose
+- Material Design: Material 3
+- Architecture: Clean Architecture + MVI
+- Dependency Injection: Hilt
+- Local database: Room
+- Network abstraction: Retrofit + OkHttp
+- JSON: Kotlinx Serialization
+- Asynchronous programming: Kotlin Coroutines
+- Reactive streams: Flow, StateFlow and SharedFlow
+- Background synchronization: WorkManager
+- Preferences: DataStore
+- Images: Coil
+- Real-time communication: OkHttp WebSocket interface with a local simulated implementation
+- Navigation: Navigation Compose
+- Maps: Google Maps Compose only if a genuine API key is available; otherwise create an attractive simulated delivery tracking map without requiring a key.
+- Testing: JUnit, MockK and Turbine
+- UI testing: Compose UI Testing
+
+Use stable compatible dependency versions and centralize them in libs.versions.toml.
+
+Avoid adding libraries that do not provide meaningful value.
+
+3. APPLICATION ARCHITECTURE
+
+Follow Clean Architecture with clear dependency boundaries.
+
+Suggested package structure:
+
+com.foodflow
+
+app/
+FoodFlowApp.kt
+MainActivity.kt
+navigation/
+di/
+
+core/
+common/
+designsystem/
+database/
+network/
+datastore/
+connectivity/
+websocket/
+testing/
+
+domain/
+model/
+repository/
+usecase/
+
+data/
+local/
+dao/
+entity/
+database/
+mapper/
+remote/
+api/
+dto/
+repository/
+sync/
+mock/
+
+feature/
+splash/
+onboarding/
+auth/
+location/
+home/
+search/
+restaurant/
+menu/
+cart/
+checkout/
+payment/
+orderconfirmation/
+tracking/
+orders/
+favorites/
+profile/
+support/
+
+Every feature should follow this structure wherever appropriate:
+
+feature/
+feature_name/
+presentation/
+screen/
+components/
+viewmodel/
+contract/
+domain/
+data/
+
+Do not create unnecessary Gradle modules. A well-organized modular package structure is sufficient initially.
+
+4. MVI IMPLEMENTATION
+
+Use a consistent MVI implementation.
+
+Each feature should have:
+
+- Intent: User actions.
+- State: Current screen state.
+- Event: One-time UI effects.
+
+Example:
+
+sealed interface CartIntent {
+data class AddItem(val foodId: String) : CartIntent
+data class RemoveItem(val foodId: String) : CartIntent
+data class UpdateQuantity(
+val foodId: String,
+val quantity: Int
+) : CartIntent
+
+data object ApplyCoupon : CartIntent
+data object Checkout : CartIntent
+
+}
+
+data class CartState(
+val items: List<CartItem> = emptyList(),
+val subtotal: Double = 0.0,
+val deliveryCharge: Double = 0.0,
+val discount: Double = 0.0,
+val total: Double = 0.0,
+val isOffline: Boolean = false,
+val isLoading: Boolean = false
+)
+
+sealed interface CartEvent {
+data class ShowMessage(val message: String) : CartEvent
+data object NavigateToCheckout : CartEvent
+}
+
+Use StateFlow for screen state and SharedFlow or Channel for one-time events.
+
+Requirements:
+
+- Use a single source of truth for each screen.
+- Avoid multiple unrelated mutable state variables.
+- Handle concurrent intents safely.
+- Use immutable UI state.
+- Avoid performing network/database operations directly inside composables.
+- Collect state using collectAsStateWithLifecycle.
+- Handle ViewModel lifecycle correctly.
+
+5. DESIGN AND UI/UX REQUIREMENTS
+
+The application must look like a polished commercial food delivery application, not a basic college demo.
+
+Design direction:
+
+- Modern Indian food delivery brand.
+- Brand name: FoodFlow.
+- Professional warm orange/coral primary color.
+- Neutral white and subtle warm backgrounds.
+- Dark mode support.
+- Rounded restaurant and food cards.
+- Attractive food photography.
+- Clear typography and spacing.
+- Consistent iconography.
+- Smooth transitions.
+- Subtle shadows and elevations.
+- Good visual hierarchy.
+- Responsive layouts.
+- Accessibility and readable contrast.
+
+Create a reusable Material 3 design system.
+
+Include:
+
+- Color tokens.
+- Typography.
+- Spacing.
+- Shapes.
+- Buttons.
+- Text fields.
+- Chips.
+- Restaurant cards.
+- Food item cards.
+- Price breakdown components.
+- Loading skeletons.
+- Empty states.
+- Error states.
+- Offline banners.
+- Confirmation dialogs.
+- Bottom sheets.
+- Snackbar components.
+
+Animations:
+
+- Animated navigation transitions.
+- Animated add-to-cart feedback.
+- Cart badge animation.
+- Quantity update animation.
+- Smooth expandable menu categories.
+- Loading shimmer.
+- Order tracking timeline animation.
+- Rider location movement simulation.
+- Button interaction feedback.
+- Animated empty and success states.
+- Smooth bottom navigation transitions.
+
+Use Compose Animation APIs such as AnimatedVisibility, animateContentSize, AnimatedContent, updateTransition and animateFloatAsState where appropriate.
+
+Animations must remain smooth and should not affect business logic.
+
+6. APPLICATION SCREENS AND FUNCTIONALITY
+
+Implement the following customer-facing screens.
+
+A. Splash and authentication
+
+Splash:
+
+- App branding.
+- Initialize database.
+- Load user session.
+- Initialize mock data if database is empty.
+- Navigate to Home or Login.
+
+Login:
+
+- Mobile number input.
+- Mock OTP verification.
+- Resend OTP timer.
+- Invalid and expired OTP handling.
+- Session persistence.
+- Logout.
+
+Use a clearly documented mock OTP for assessment demonstration. Do not represent it as secure production authentication.
+
+B. Location selection
+
+- Current location simulation.
+- Saved addresses.
+- Add, edit and delete addresses.
+- Home, Work and Other labels.
+- Delivery instructions.
+- Manual location selection.
+- Delivery availability validation.
+- Handle location permission denial.
+
+Do not require an actual maps API key.
+
+C. Home screen
+
+Include:
+
+- Current address.
+- Search bar.
+- Promotional banners.
+- Food categories.
+- Popular restaurants.
+- Recommended restaurants.
+- Top-rated restaurants.
+- Offers.
+- Recently ordered items.
+- Favourite restaurants.
+- Loading, empty, error and offline states.
+
+D. Search screen
+
+- Search restaurants.
+- Search food items.
+- Recent searches.
+- Trending searches.
+- Search suggestions.
+- Clear search history.
+- Cuisine filters.
+- Veg/non-veg filters.
+- Price filters.
+- Rating filters.
+- Delivery time sorting.
+- No-results state.
+- Offline search using cached data.
+
+Implement search using Kotlin Flow with debounce and flatMapLatest where appropriate.
+
+E. Restaurant listing
+
+Display:
+
+- Restaurant name.
+- Restaurant image.
+- Cuisine.
+- Rating.
+- Delivery estimate.
+- Delivery fee.
+- Offers.
+- Open/closed status.
+- Favourite action.
+
+Support:
+
+- Sorting.
+- Filtering.
+- Search.
+- Cached results.
+- Pull-to-refresh.
+
+F. Restaurant details and menu
+
+- Restaurant information.
+- Menu categories.
+- Recommended items.
+- Food descriptions.
+- Prices.
+- Food images.
+- Veg/non-veg labels.
+- Availability.
+- Add-ons.
+- Food customization.
+- Quantity selection.
+- Search within menu.
+
+Support menu caching and offline browsing.
+
+G. Cart
+
+Implement:
+
+- Add item.
+- Remove item.
+- Increase quantity.
+- Decrease quantity.
+- Multiple item support.
+- Restaurant-specific cart validation.
+- Cooking instructions.
+- Subtotal.
+- Delivery fee.
+- Packaging charge.
+- Taxes.
+- Discounts.
+- Coupons.
+- Total payable.
+
+IMPORTANT:
+
+Adding, updating or removing cart items must work offline.
+
+Save cart changes immediately in Room.
+
+The cart UI must observe Room Flow and update automatically.
+
+Use a Room transaction to update cart data and record pending synchronization work atomically.
+
+Handle:
+
+- App killed after cart update.
+- Network disconnected.
+- Network restored.
+- Duplicate sync operation.
+- Restaurant mismatch.
+- Food item unavailable.
+- Price changed on backend.
+
+H. Checkout
+
+Include:
+
+- Address selection.
+- Delivery instructions.
+- Order summary.
+- Coupon validation.
+- Price calculation.
+- Payment selection.
+- Final server-side validation.
+
+Payment methods:
+
+- Mock UPI.
+- Mock card.
+- Mock cash on delivery.
+
+The app must not allow an unverified offline order to appear as confirmed.
+
+I. Payment simulation
+
+Implement:
+
+- Payment success.
+- Payment failure.
+- Payment pending.
+- Retry.
+- Payment status verification.
+- Duplicate payment callback protection.
+- App restart recovery.
+
+Simulate payment outcomes through configurable mock responses.
+
+Keep payment status separate from order status.
+
+J. Order confirmation
+
+Display:
+
+- Order ID.
+- Restaurant.
+- Ordered items.
+- Price breakdown.
+- Payment status.
+- Estimated delivery.
+- Tracking action.
+
+K. Order tracking
+
+Implement an order tracking timeline:
+
+1. Order placed.
+2. Payment confirmed.
+3. Restaurant accepted.
+4. Food preparing.
+5. Ready for pickup.
+6. Delivery partner assigned.
+7. Picked up.
+8. Delivered.
+
+Also support:
+
+- Cancelled.
+- Delayed.
+- Payment pending.
+- Payment failed.
+- Refund pending.
+
+Show:
+
+- Order status.
+- Delivery partner details.
+- Simulated rider location.
+- Estimated delivery time.
+- Restaurant details.
+- Order summary.
+
+Use a simulated map or attractive map-like tracking interface without requiring an API key.
+
+L. Order history
+
+- Active orders.
+- Past orders.
+- Cancelled orders.
+- Order details.
+- Reorder.
+- Invoice.
+- Rating and review.
+- Report an issue.
+
+M. Favourites
+
+- Add/remove restaurants.
+- Observe local favourite data.
+- Offline support.
+- Sync changes when connected.
+
+N. Profile
+
+- User information.
+- Saved addresses.
+- Order history.
+- Favourites.
+- Payment preferences.
+- App settings.
+- Dark mode.
+- Notification preferences.
+- Logout.
+
+O. Help and support
+
+Provide mock support workflows for:
+
+- Missing item.
+- Wrong item.
+- Delayed delivery.
+- Order cancellation.
+- Payment deducted but order not confirmed.
+- Refund status.
+
+Do not build a real customer support backend.
+
+7. OFFLINE-FIRST ARCHITECTURE
+
+This is a critical requirement.
+
+Implement a proper offline-first data architecture.
+
+Principle:
+
+ROOM MUST BE THE SINGLE SOURCE OF TRUTH FOR UI DATA.
+
+The UI must observe Room. Network responses should update Room, and Room should emit updated data to the UI.
+
+Expected flow:
+
+Compose UI
+↓
+ViewModel
+↓
+Use Case
+↓
+Repository
+├── Room
+├── Mock Remote API
+└── Sync Engine
+
+Implement:
+
+- Restaurant caching.
+- Menu caching.
+- Cart persistence.
+- Order history caching.
+- Order status persistence.
+- Favourite persistence.
+- Search history persistence.
+- User preferences persistence.
+
+Use Flow from Room DAOs.
+
+Implement refresh operations that:
+
+1. Request latest remote data.
+2. Convert DTOs to domain models/entities.
+3. Persist updates in Room.
+4. Preserve cached data if requests fail.
+
+Never clear valid cached data simply because a network request failed.
+
+Show last-updated timestamps where useful.
+
+Use DataStore for preferences and lightweight settings.
+
+8. NETWORK CONNECTIVITY AND ERROR HANDLING
+
+Implement a ConnectivityObserver using Android connectivity APIs.
+
+Support:
+
+- Online.
+- Offline.
+- Connection restored.
+- Request timeout.
+- Server error.
+- Unauthorized.
+- Invalid response.
+- JSON parsing error.
+- Empty response.
+- Retryable failure.
+
+Provide a reusable Result abstraction.
+
+Use proper exception handling.
+
+Do not catch Throwable indiscriminately.
+
+Do not swallow exceptions silently.
+
+Do not show raw exception messages to customers.
+
+Provide user-friendly errors and useful developer logs.
+
+Implement retry policies with bounded exponential backoff and appropriate constraints.
+
+Important distinction:
+
+Network availability does not guarantee that the backend is reachable.
+
+Handle failed requests even when Android reports an active network.
+
+9. LOCAL MOCK BACKEND
+
+Since there is no actual backend, implement a realistic mock backend abstraction.
+
+Create interfaces such as:
+
+RestaurantRemoteDataSource
+CartRemoteDataSource
+OrderRemoteDataSource
+PaymentRemoteDataSource
+UserRemoteDataSource
+
+Provide mock implementations.
+
+The mock backend should simulate:
+
+- Restaurant listing.
+- Restaurant details.
+- Food menu.
+- Search.
+- Coupon validation.
+- Cart validation.
+- Order creation.
+- Order lookup.
+- Order cancellation.
+- Payment processing.
+- Order history.
+- Restaurant acceptance/rejection.
+- Delivery partner assignment.
+- Order status progression.
+- Rider location updates.
+
+Include configurable mock scenarios:
+
+- Success.
+- Network timeout.
+- Server failure.
+- Invalid response.
+- Payment pending.
+- Payment failure.
+- Restaurant rejection.
+- Food unavailable.
+- Price changed.
+- Delayed order.
+
+Create a MockScenarioController that allows testing these scenarios from a developer/debug screen.
+
+Do not scatter hardcoded mock behaviour throughout ViewModels.
+
+Keep mock implementations behind interfaces so they can be replaced with real Retrofit APIs later.
+
+Implement simulated request delays to resemble actual network calls.
+
+Do not fake a real server or claim that local simulation provides actual cross-device synchronization.
+
+10. CART SYNCHRONIZATION
+
+Implement a reliable local outbox pattern.
+
+Use:
+
+- CartEntity.
+- PendingOperationEntity.
+- SyncStatus.
+- Operation ID.
+- Retry count.
+- Created timestamp.
+
+When cart changes:
+
+1. Execute a Room transaction.
+2. Update cart state.
+3. Insert a pending operation.
+4. Update the UI immediately through Room Flow.
+5. Schedule WorkManager synchronization when appropriate.
+
+When connectivity is available:
+
+1. Fetch pending operations.
+2. Process them safely.
+3. Send unique operation IDs.
+4. Receive mock backend acknowledgement.
+5. Mark acknowledged operations as SYNCED.
+6. Keep failed operations pending.
+7. Retry transient failures.
+
+Use unique work names and appropriate WorkManager policies.
+
+Prevent duplicate operation processing.
+
+Handle operations that were applied remotely but whose acknowledgement was lost.
+
+For this local mock backend, persist its simulated server-side state across app restarts where practical.
+
+For assessment demonstration, provide a way to reset mock server data independently from local app data.
+
+For cart reconciliation:
+
+- Use stable item IDs.
+- Validate prices remotely.
+- Validate availability remotely.
+- Define how quantity changes are reconciled.
+- Avoid blindly replaying stale cart data.
+
+Document conflict-resolution rules.
+
+11. DUPLICATE ORDER PREVENTION
+
+This requirement is mandatory.
+
+Implement idempotent order creation.
+
+Before submitting an order:
+
+- Generate an idempotency key.
+- Persist the checkout attempt and key locally.
+- Disable repeated submission while processing.
+- Send the same key for retries of the same checkout attempt.
+
+Mock backend must:
+
+- Maintain a mapping of idempotency keys to created orders.
+- Return the existing order for repeated requests using the same key.
+- Never create two orders for the same idempotency key.
+
+Implement:
+GET /orders/by-idempotency-key/{key}
+
+or the equivalent mock repository method.
+
+Handle:
+
+1. Customer taps Place Order.
+2. Backend creates order.
+3. Response is lost.
+4. Customer retries.
+5. App checks the original checkout attempt.
+6. Existing order is returned instead of creating a new one.
+
+Do not generate a new idempotency key just because the first request timed out.
+
+Add tests proving that repeated submissions create only one order.
+
+Also protect against duplicate payment callbacks.
+
+12. WEBSOCKET REAL-TIME ORDER TRACKING
+
+Implement an abstraction for order event streaming.
+
+Create:
+
+OrderEvent
+OrderEventSource
+OrderWebSocketRepository
+OrderTrackingRepository
+
+Use a WebSocket interface with:
+
+- Connect.
+- Disconnect.
+- Subscribe.
+- Receive events.
+- Reconnect.
+- Handle errors.
+
+Since there is no real backend, provide a LocalSimulatedOrderEventSource.
+
+It should simulate realistic events:
+
+ORDER_ACCEPTED
+FOOD_PREPARING
+FOOD_READY
+DELIVERY_PARTNER_ASSIGNED
+ORDER_PICKED_UP
+RIDER_LOCATION_UPDATED
+ORDER_DELIVERED
+ORDER_CANCELLED
+
+Generate simulated GPS coordinates for a delivery partner.
+
+Simulate event intervals and realistic progression.
+
+IMPORTANT:
+
+- WebSocket events must update Room.
+- UI must observe Room rather than directly depend on socket callbacks.
+- Validate order IDs.
+- Use event sequence numbers or versions.
+- Ignore duplicate events.
+- Ignore stale or out-of-order events.
+- Handle reconnection.
+- Reconcile missed events through order details.
+- Persist last known tracking state.
+- Do not keep an unnecessary permanent socket alive in the background.
+- Close connections appropriately when the tracking session ends.
+
+Make the tracking simulator deterministic and testable.
+
+Document how the local simulator differs from a production WebSocket server.
+
+13. ORDER STATE AND PAYMENT STATE MODELLING
+
+Create separate models.
+
+OrderStatus:
+
+- PLACED
+- ACCEPTED
+- PREPARING
+- READY_FOR_PICKUP
+- PARTNER_ASSIGNED
+- PICKED_UP
+- DELIVERED
+- CANCELLED
+
+PaymentStatus:
+
+- NOT_STARTED
+- PENDING
+- SUCCESS
+- FAILED
+- REFUND_PENDING
+- REFUNDED
+- COD_DUE
+
+Validate order status transitions.
+
+Do not allow an order to jump directly from PLACED to DELIVERED.
+
+Keep the mock backend authoritative for confirmed order transitions.
+
+14. KOTLIN CONCEPTS
+
+Use Kotlin features naturally and meaningfully.
+
+Demonstrate:
+
+- Data classes.
+- Sealed interfaces.
+- Sealed classes.
+- Enum classes.
+- Extension functions.
+- Higher-order functions.
+- Lambda expressions.
+- Scope functions.
+- Null safety.
+- Smart casts.
+- Coroutines.
+- Suspend functions.
+- Flow.
+- StateFlow.
+- SharedFlow.
+- Flow operators.
+- Generic result wrappers.
+- Reified functions where useful.
+- Delegation where appropriate.
+- Companion objects.
+- Object declarations.
+- Collections and collection operations.
+- Destructuring declarations.
+- Operator overloading only where it genuinely improves readability.
+- Structured concurrency.
+- Coroutine exception handling.
+- Kotlin serialization.
+- Interface-based abstraction.
+
+Avoid forcing concepts into the code merely to demonstrate them.
+
+For each advanced concept used, include a concise comment explaining why it is appropriate.
+
+15. DATA MODELS AND MOCK DATA
+
+Create realistic mock data.
+
+Minimum dataset:
+
+- 15 restaurants.
+- 100–120 food items.
+- 8 food categories.
+- 10 coupons.
+- 5 delivery addresses.
+- 15–20 sample orders.
+- 3 delivery partners.
+- Multiple order event sequences.
+
+Use fictional Indian restaurant names and realistic Indian food items.
+
+Examples:
+
+- Spice Garden.
+- Pizza Avenue.
+- South Tadka.
+- Burger District.
+- The Gujarati Bowl.
+- Punjabi Rasoi.
+- Dosa Junction.
+
+Include cuisines:
+
+- North Indian.
+- South Indian.
+- Gujarati.
+- Chinese.
+- Italian.
+- Mexican.
+- Fast Food.
+- Desserts.
+
+Include vegetarian and non-vegetarian items.
+
+Use valid, licensed food image URLs or bundled local images.
+
+Provide image placeholders and fallback handling.
+
+Store initial seed data as JSON in assets.
+
+Use Kotlinx Serialization to parse JSON.
+
+Map DTOs to Room entities and domain models.
+
+Do not load the same seed data repeatedly and overwrite user changes.
+
+16. ERROR AND EDGE CASES
+
+Explicitly implement and test:
+
+1. App launch without internet.
+2. Home screen API failure.
+3. Search while offline.
+4. Restaurant details while offline.
+5. Add item while offline.
+6. Remove item while offline.
+7. Update cart quantity while offline.
+8. App process killed after cart update.
+9. Connectivity restored.
+10. WorkManager sync retry.
+11. Duplicate cart operation.
+12. Restaurant becomes unavailable.
+13. Food item price changes.
+14. Coupon expires.
+15. Place Order tapped multiple times.
+16. Order API timeout after server processing.
+17. Payment success.
+18. Payment failure.
+19. Payment pending.
+20. Payment callback received twice.
+21. App closes during payment.
+22. Restaurant rejects an order.
+23. Delivery partner is not assigned.
+24. WebSocket disconnects.
+25. Duplicate WebSocket event.
+26. Out-of-order WebSocket event.
+27. Rider location stops updating.
+28. Order cancellation.
+29. Logout and account-specific data isolation.
+30. Corrupted or invalid cached data.
+
+For each scenario:
+
+- Explain the expected behaviour.
+- Implement the recovery behaviour.
+- Add appropriate tests.
+
+17. TESTING REQUIREMENTS
+
+Write unit tests for:
+
+- Use cases.
+- ViewModels.
+- MVI state updates.
+- Repository behaviour.
+- Cart calculations.
+- Coupon calculations.
+- Order state transitions.
+- Duplicate order prevention.
+- Idempotency.
+- Cart synchronization.
+- Conflict resolution.
+- WebSocket event ordering.
+- Payment state transitions.
+
+Write DAO tests using an in-memory Room database.
+
+Write WorkManager tests where practical.
+
+Write Compose UI tests for:
+
+- Home.
+- Search.
+- Restaurant details.
+- Cart.
+- Checkout.
+- Order confirmation.
+- Tracking.
+
+Test online and offline scenarios.
+
+Provide deterministic mock data and test dispatchers.
+
+Do not use real delays in tests where virtual time can be used.
+
+18. DOCUMENTATION AND CODE COMMENTS
+
+Include meaningful comments, not comments that merely repeat the code.
+
+Explain:
+
+- Why Room is the source of truth.
+- Why the repository owns data synchronization.
+- Why WorkManager is used.
+- Why WebSocket is used.
+- Why idempotency keys are necessary.
+- Why payment and order status are separate.
+- Why stale WebSocket events are ignored.
+- Why offline order creation is not confirmed.
+- Why mock backend interfaces are replaceable.
+
+Add KDoc to important public classes, repository contracts and complex methods.
+
+Create README.md containing:
+
+1. Project overview.
+2. Architecture diagram.
+3. Technology stack.
+4. Package structure.
+5. Application screen flow.
+6. Offline-first explanation.
+7. Synchronization workflow.
+8. Duplicate order prevention.
+9. WebSocket simulation.
+10. Mock backend explanation.
+11. Database schema.
+12. API contracts.
+13. How to run the application.
+14. How to test offline scenarios.
+15. How to trigger mock failure scenarios.
+16. Known limitations.
+17. Future enhancements.
+
+19. DEVELOPER DEBUG SCREEN
+
+Create a developer-only screen for demonstrating assessment scenarios.
+
+Include controls for:
+
+- Simulate internet offline.
+- Simulate internet online.
+- Trigger API timeout.
+- Trigger server error.
+- Simulate payment success.
+- Simulate payment failure.
+- Simulate payment pending.
+- Simulate restaurant rejection.
+- Simulate unavailable food.
+- Change food price.
+- Start order event simulation.
+- Disconnect simulated WebSocket.
+- Reconnect WebSocket.
+- Send duplicate order event.
+- Send stale event.
+- Reset mock backend data.
+- Reset local demo data.
+
+Keep this screen separate from normal customer functionality.
+
+Ensure debug controls are deterministic.
+
+20. IMPLEMENTATION AND DELIVERY PROCESS
+
+Do not try to generate the entire application in one unstructured response.
+
+Work in well-defined implementation phases.
+
+PHASE 1:
+
+- Inspect the current project.
+- Confirm Gradle and Kotlin configuration.
+- Create application skeleton.
+- Configure dependencies.
+- Configure Hilt.
+- Configure Compose theme.
+- Create navigation.
+- Confirm the project builds.
+
+PHASE 2:
+
+- Create domain models.
+- Create Room entities and DAOs.
+- Create database.
+- Create JSON mock data.
+- Create local seed data initialization.
+- Implement repositories.
+- Confirm the project builds.
+
+PHASE 3:
+
+- Implement Home.
+- Search.
+- Restaurant listing.
+- Restaurant details.
+- Menu.
+- Confirm the project builds.
+
+PHASE 4:
+
+- Implement Cart.
+- Offline persistence.
+- Pending operations.
+- WorkManager.
+- Sync and reconciliation.
+- Confirm the project builds.
+
+PHASE 5:
+
+- Implement Checkout.
+- Mock payment.
+- Idempotent order creation.
+- Order confirmation.
+- Order history.
+- Confirm the project builds.
+
+PHASE 6:
+
+- Implement WebSocket abstraction.
+- Simulated order events.
+- Tracking screen.
+- Rider location simulation.
+- Reconnection and REST reconciliation.
+- Confirm the project builds.
+
+PHASE 7:
+
+- Implement profile.
+- Favourites.
+- Support.
+- Developer debug screen.
+- UI animations.
+- Dark theme.
+
+PHASE 8:
+
+- Unit tests.
+- Integration tests.
+- UI tests.
+- Fix compile errors.
+- Fix runtime issues.
+- Review architecture.
+- Complete README.
+
+After each phase:
+
+1. List the files created or modified.
+2. Explain the implementation.
+3. Check imports and dependencies.
+4. Run relevant Gradle build and test commands if the environment permits.
+5. Fix errors before proceeding.
+6. Do not leave incomplete references to classes or functions.
+7. Keep a running implementation checklist.
+
+21. CODE QUALITY RULES
+
+- Follow Kotlin coding conventions.
+- Use meaningful names.
+- Avoid god classes.
+- Avoid massive ViewModels.
+- Avoid business logic in composables.
+- Avoid repository logic in ViewModels.
+- Avoid direct DAO access from UI.
+- Avoid hardcoded values scattered across the codebase.
+- Use constants or configuration where appropriate.
+- Use immutable models.
+- Use proper dispatcher injection for testability.
+- Avoid GlobalScope.
+- Avoid runBlocking in production application code.
+- Avoid blocking the main thread.
+- Avoid unnecessary singletons.
+- Avoid duplicated logic.
+- Avoid unsafe !! operators.
+- Avoid catching and ignoring exceptions.
+- Avoid excessive abstraction.
+- Use transactions where consistency is required.
+- Ensure account-specific information is isolated.
+- Make the application resilient to process death.
+
+22. FINAL ACCEPTANCE CRITERIA
+
+The project is complete only when:
+
+1. The Android application compiles successfully.
+2. It launches successfully.
+3. Navigation works.
+4. Home displays mock restaurants.
+5. Restaurant details and menus work.
+6. Search works.
+7. Cart works.
+8. Cart survives app restarts.
+9. Cart works offline.
+10. Pending changes synchronize after connectivity returns.
+11. WorkManager handles deferred retries.
+12. Checkout works.
+13. Mock payment supports success, failure and pending.
+14. Duplicate order creation is prevented.
+15. Order confirmation works.
+16. Order history works.
+17. WebSocket simulation works.
+18. Tracking events update Room.
+19. Tracking recovers after simulated disconnection.
+20. Error, empty, loading and offline states are implemented.
+21. UI is polished and consistent.
+22. Important business logic has unit tests.
+23. README explains the architecture and design decisions.
+24. There are no known compile errors or unresolved TODOs in required functionality.
+
+Do not sacrifice working functionality for additional screens.
+
+Prioritize a complete, demonstrable customer journey over unnecessary features.
+
+23. FIRST TASK
+
+Before writing implementation code:
+
+1. Analyze all requirements.
+2. Propose the final architecture.
+3. Provide the complete package structure.
+4. Define the main database entities and relationships.
+5. Define repository interfaces.
+6. Define MVI contracts for the major screens.
+7. Define the mock backend design.
+8. Explain the offline synchronization and duplicate-order strategy.
+9. Provide the implementation phase checklist.
+
+Then begin PHASE 1.
+
+Do not skip architectural planning.
+
+The final goal is a professional, attractive, reliable Kotlin Android food delivery application that demonstrates senior-level engineering decisions and that I can confidently explain in a technical interview.

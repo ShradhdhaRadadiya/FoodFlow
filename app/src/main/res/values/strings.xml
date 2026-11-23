@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FoodFlow</string>
+    <string name="tagline">Fresh food, delivered effortlessly</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_cart">Cart</string>
+    <string name="nav_orders">Orders</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Connectivity -->
+    <string name="offline_banner_title">You are offline</string>
+    <string name="offline_banner_subtitle">Browsing saved menus. Your cart stays saved until you reconnect.</string>
+    <string name="retry_action">Retry</string>
+
+    <!-- Auth -->
+    <string name="login_title">Craving something delicious?</string>
+    <string name="login_subtitle">Enter your mobile number to receive a one-time verification code.</string>
+    <string name="login_phone_hint">10-digit mobile number</string>
+    <string name="login_send_otp">Send OTP</string>
+    <string name="login_verify_otp">Verify &amp; Continue</string>
+
+    <!-- Common -->
+    <string name="empty_cart_title">Your cart is empty</string>
+    <string name="empty_cart_subtitle">Explore top restaurants near you and add your favourite dishes.</string>
+    <string name="explore_restaurants">Explore Restaurants</string>
+    <string name="place_order">Place Order</string>
+    <string name="track_order">Track Order</string>
+    <string name="download_invoice">Download Invoice</string>
+    <string name="debug_tools_title">Developer Tools</string>
+</resources>

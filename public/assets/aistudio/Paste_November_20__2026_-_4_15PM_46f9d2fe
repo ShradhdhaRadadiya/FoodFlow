@@ -1,0 +1,1146 @@
+FoodFlow – Implement a Global AI Voice Assistant with Real-Time Conversational Interaction
+
+Analyze my existing FoodFlow Android application and implement a production-quality, real-time AI Voice Assistant that can be accessed from every screen.
+
+The assistant should provide a natural, intelligent, voice-first food ordering experience. Users should be able to speak naturally, receive spoken responses, ask follow-up questions, explore restaurants and food items, and perform supported application actions without manually navigating through multiple screens.
+
+This is not a basic voice recorder or chatbot. Build a real-time conversational AI assistant with interruption handling, persistent conversation context, streaming audio, WebSocket connectivity, and proper Android lifecycle management.
+
+---
+
+1. MOST IMPORTANT REQUIREMENT: GLOBAL REUSABLE VOICE ASSISTANT
+
+The voice assistant must be accessible throughout the entire FoodFlow application.
+
+Expected user experience
+
+1. User opens FoodFlow.
+2. A reusable floating voice assistant widget is available on supported screens.
+3. User taps the widget.
+4. A compact, attractive voice assistant interface opens.
+5. User starts speaking.
+6. Assistant listens, understands the request, processes it, and responds using audio.
+7. While the assistant is active, the user navigates to another screen.
+8. The assistant must retain the existing conversation and current interaction state.
+9. The user can continue the same conversation without restarting it.
+
+Critical architecture requirements
+
+Do not create a separate voice assistant or ViewModel for every screen.
+
+Implement:
+
+- One global Voice Assistant feature.
+- One shared VoiceAssistantViewModel.
+- One reusable VoiceAssistantController or equivalent session coordinator.
+- One conversation/session manager.
+- One WebSocket connection manager.
+- One audio recording manager.
+- One audio playback manager.
+- One shared conversation state.
+- One reusable Compose voice assistant widget.
+- One reusable assistant interface/screen.
+
+The assistant must survive ordinary navigation between application screens.
+
+Do not create duplicate WebSocket connections, audio recorders, playback engines, or conversation sessions.
+
+Reusable interface
+
+Create an interface that can be used throughout the application.
+
+For example:
+
+"VoiceAssistantController"
+
+It should expose appropriate operations such as:
+
+- openAssistant()
+- closeAssistant()
+- startListening()
+- stopListening()
+- pauseAssistant()
+- resumeAssistant()
+- interruptAssistant()
+- sendTextMessage()
+- observeAssistantState()
+- observeConversation()
+- releaseResources()
+
+Adapt the actual interface and naming to the existing project architecture.
+
+Screens should interact with the shared assistant through the interface rather than directly accessing WebSocket, microphone, or audio playback implementations.
+
+---
+
+2. GLOBAL ASSISTANT UI/UX
+
+Create a premium, modern AI voice assistant experience matching the existing FoodFlow design system.
+
+Important: Do not redesign existing application screens, navigation, theme, colors, or existing functionality.
+
+Floating assistant widget
+
+Display a reusable floating assistant entry point across applicable screens.
+
+Requirements:
+
+- Attractive animated AI assistant icon.
+- Subtle pulse animation when available.
+- Visual indication when the assistant is active.
+- Clear indication when the assistant is speaking or listening.
+- Do not obstruct important screen controls.
+- Respect system navigation bars, bottom navigation, and screen insets.
+- Avoid unnecessary recompositions.
+- Avoid creating multiple widget instances.
+
+Assistant interface
+
+When opened, show a premium conversational interface.
+
+Include:
+
+- AI assistant visual identity.
+- Animated listening indicator.
+- Audio waveform or equalizer animation.
+- Current connection status.
+- Conversation history.
+- Current user request.
+- AI response text/transcription where available.
+- Mute/unmute control if applicable.
+- Pause/resume control.
+- Close control.
+- Microphone state.
+- Error and retry information.
+- Optional text input as a fallback.
+- Suggested voice commands.
+
+Suggested quick prompts:
+
+- Find vegetarian food.
+- Suggest something under ₹200.
+- Find spicy food.
+- Recommend today's special.
+- Add a pizza to my cart.
+- Show my current cart.
+- Find healthy breakfast.
+- Suggest a meal for two.
+
+Use smooth animations without excessive rendering or resource consumption.
+
+The interface should clearly communicate what the assistant is doing at every moment.
+
+---
+
+3. VOICE ASSISTANT STATE MANAGEMENT
+
+Create a centralized and strongly typed state management system.
+
+Use separate files for UI states, intents, events, models, and other contracts.
+
+Do not declare data classes or sealed classes inside Compose screen files or ViewModels.
+
+Suggested assistant states:
+
+- Idle
+- Initializing
+- RequestingPermission
+- Connecting
+- Connected
+- Listening
+- Processing
+- Responding
+- Speaking
+- Interrupted
+- Paused
+- Reconnecting
+- Error
+- Closing
+- Closed
+
+Adapt these states to avoid unnecessary complexity and impossible state combinations.
+
+Connection status
+
+Users must clearly see the following statuses:
+
+Status| User-visible meaning
+Connecting| Establishing secure connection
+Connected| Assistant is ready
+Listening| Assistant is receiving voice
+Processing| Understanding the request
+Responding| Preparing an answer
+Speaking| Playing the AI response
+Interrupted| Current response was interrupted
+Paused| Assistant is temporarily paused
+Reconnecting| Recovering the connection
+Error| Something went wrong
+
+Maintain separate connection, conversation, recording, and playback states where necessary instead of using one oversized state enum for everything.
+
+All states must be exposed through StateFlow.
+
+Use lifecycle-aware collection in Compose.
+
+---
+
+4. REAL-TIME AI COMMUNICATION USING WEBSOCKET
+
+Implement real-time audio interaction using a suitable Google Gemini real-time audio API/model.
+
+First inspect the existing Gemini integration and verify the current official Gemini Live API documentation, supported models, authentication requirements, audio formats, and available features.
+
+Do not assume that an ordinary text-generation API supports real-time bidirectional audio.
+
+WebSocket requirements
+
+Implement a dedicated WebSocket connection manager.
+
+Responsibilities:
+
+- Establish a secure connection.
+- Authenticate correctly.
+- Send audio input.
+- Receive streamed AI responses.
+- Handle text/transcription events.
+- Handle audio response chunks.
+- Handle session initialization.
+- Handle session configuration.
+- Handle server-side errors.
+- Detect disconnections.
+- Reconnect safely where appropriate.
+- Close connections gracefully.
+- Prevent duplicate connections.
+
+Use the existing networking stack if appropriate.
+
+Do not put WebSocket implementation inside a ViewModel or Composable.
+
+Connection reliability
+
+Handle:
+
+- Connection timeout.
+- Authentication failure.
+- Invalid API key.
+- Invalid model.
+- Unsupported audio format.
+- Server error.
+- Rate limit.
+- API quota exhaustion.
+- Internet disconnection.
+- WebSocket closure.
+- Unexpected server response.
+- Malformed messages.
+- Reconnection failure.
+- Session expiration.
+- Application backgrounding.
+- Microphone permission denial.
+
+Use bounded retries and exponential backoff with jitter where appropriate.
+
+Do not retry indefinitely.
+
+Do not reconnect automatically after the user explicitly closes the assistant.
+
+Do not create multiple concurrent connections.
+
+Security
+
+Never hardcode production API keys in publicly accessible Android source code.
+
+Do not assume BuildConfig or local configuration files make a client-side API key secure.
+
+Inspect the available authentication options and recommend an appropriate secure approach, such as short-lived session credentials issued by a trusted service where supported.
+
+If the current project has no backend, document the limitation and provide a development-only configuration that does not pretend to be production-secure.
+
+Do not introduce an unnecessary paid service.
+
+---
+
+5. TWO-WAY AUDIO STREAMING
+
+The interaction must support:
+
+User voice → AI processing → AI audio response
+
+The assistant must be able to communicate using audio only.
+
+Text transcription and response text can be displayed as optional visual assistance, but audio must be the primary interaction method.
+
+Input audio
+
+Implement:
+
+- Microphone permission handling.
+- Audio recording initialization.
+- PCM/audio format configuration based on the selected Gemini API.
+- Appropriate sample rate and channel configuration.
+- Audio chunk generation.
+- Streaming audio transmission.
+- Audio buffering.
+- Backpressure handling.
+- Audio interruption.
+- Recording cleanup.
+
+Do not record the entire conversation into a large byte array.
+
+Stream audio in bounded chunks.
+
+Do not block the main thread while recording, processing, or transmitting audio.
+
+Audio chunk management
+
+Implement a proper streaming pipeline.
+
+Requirements:
+
+- Fixed or appropriately bounded chunk sizes.
+- Correct audio format.
+- Sequential chunk ordering.
+- Appropriate timestamps or sequence information where required.
+- Bounded buffers.
+- Backpressure handling.
+- Safe cancellation.
+- No unbounded queues.
+- No unnecessary audio copies.
+- Proper handling of partial chunks.
+- Correct end-of-turn/end-of-input signaling according to the API.
+
+Use a producer-consumer approach where appropriate.
+
+Avoid creating a new coroutine for every audio chunk.
+
+Noise reduction and audio quality
+
+Investigate Android-supported audio processing capabilities.
+
+Use appropriate platform-supported audio effects when available, such as:
+
+- Noise suppression.
+- Acoustic echo cancellation.
+- Automatic gain control.
+
+Check availability before enabling effects.
+
+Do not assume these effects exist on every device.
+
+Ensure audio effects are attached to the correct audio session and released properly.
+
+Do not apply multiple overlapping audio-processing mechanisms without understanding their impact.
+
+Document device-specific limitations.
+
+---
+
+6. AI RESPONSE AUDIO PLAYBACK
+
+Implement a dedicated audio playback manager.
+
+Requirements:
+
+- Stream incoming AI audio chunks.
+- Play audio incrementally rather than waiting for the entire response.
+- Maintain correct chunk ordering.
+- Handle audio buffering.
+- Prevent playback gaps where possible.
+- Support cancellation.
+- Support interruption.
+- Release audio resources.
+- Handle malformed audio.
+- Handle playback failures.
+
+Use an appropriate Android audio playback API such as AudioTrack or another suitable streaming implementation.
+
+Choose the implementation based on the actual audio format returned by Gemini.
+
+Do not store long audio responses entirely in memory.
+
+Keep buffers bounded.
+
+Ensure audio playback never blocks the main thread.
+
+---
+
+7. CRITICAL FEATURE: BARGE-IN / INTERRUPT HANDLING
+
+This is one of the most important features.
+
+The user must be able to interrupt the assistant while it is speaking.
+
+Expected behavior
+
+Example:
+
+1. User: "Suggest some vegetarian food."
+2. AI starts speaking: "I recommend paneer..."
+3. Before the assistant finishes, the user says: "Actually, suggest something under 150 rupees."
+4. The current AI audio must stop immediately.
+5. Cancel the current response generation/playback where supported.
+6. Stop or reset the current output audio pipeline safely.
+7. Capture the new user input.
+8. Send the new request.
+9. Continue the conversation using the previous conversation context.
+10. Play the new response.
+
+The assistant must not continue speaking the previous response after interruption.
+
+Implementation requirements
+
+Implement a centralized interruption mechanism.
+
+It should:
+
+- Detect a new user speech request while AI output is playing.
+- Stop current playback immediately.
+- Cancel the previous response job.
+- Clear stale playback buffers.
+- Notify the AI session that the response was interrupted, using the correct API protocol.
+- Avoid mixing old and new audio chunks.
+- Prevent old responses from being displayed after a newer request.
+- Preserve conversation history.
+- Handle rapid repeated interruptions safely.
+
+Use request IDs, turn IDs, generation IDs, or equivalent mechanisms to discard stale responses.
+
+Do not cancel the entire application-wide assistant session when only the current response needs interruption.
+
+If the chosen API supports server-side response cancellation, use it.
+
+Do not claim interruption is complete until the playback pipeline and response state have actually been updated.
+
+---
+
+8. PAUSE, RESUME, CLOSE, AND SESSION MANAGEMENT
+
+The assistant must have clearly distinguishable pause and close operations.
+
+Pause
+
+When the user pauses:
+
+- Stop microphone recording.
+- Stop sending new audio.
+- Stop AI response playback.
+- Cancel or suspend active work safely.
+- Preserve conversation history.
+- Update UI status to Paused.
+- Do not unexpectedly restart microphone recording.
+
+Define whether the WebSocket session remains connected or is suspended based on API capabilities and resource considerations.
+
+Resume
+
+When the user resumes:
+
+- Restore the required session state.
+- Reconnect if the session has expired.
+- Preserve previous conversation context.
+- Start listening only after the user explicitly resumes or starts a new request.
+
+Close
+
+When the user closes the assistant:
+
+- Stop recording.
+- Stop playback.
+- Cancel active coroutines.
+- Cancel pending response jobs.
+- Close or release the session according to the session policy.
+- Release audio resources.
+- Update the state to Closed.
+- Keep conversation history according to the configured session-retention policy.
+
+Closing the assistant UI must not accidentally leave the microphone active.
+
+Define the difference between hiding the assistant interface and terminating the conversation session.
+
+Provide predictable behavior.
+
+---
+
+9. ANDROID APPLICATION LIFECYCLE MANAGEMENT
+
+Handle lifecycle transitions carefully.
+
+The application must never continue playing voice responses unexpectedly when it is minimized or no longer visible.
+
+When application enters background
+
+When the application goes to background:
+
+- Stop microphone recording.
+- Stop outgoing audio streaming.
+- Stop AI audio playback immediately.
+- Cancel or suspend active audio operations safely.
+- Update assistant state.
+- Prevent audio from unexpectedly playing.
+- Preserve conversation context.
+- Avoid leaking microphone resources.
+- Avoid leaving a WebSocket session in an inconsistent state.
+
+When application returns to foreground
+
+- Restore the assistant interface if it was open.
+- Restore the previous conversation history.
+- Check whether the session is still valid.
+- Reconnect only when appropriate.
+- Display the correct connection status.
+- Do not automatically start recording unless explicitly allowed by the user and permission/session state.
+
+Lifecycle architecture
+
+Use appropriate lifecycle-aware components.
+
+Do not tie the entire conversation session to an individual screen's lifecycle.
+
+Use a shared application-scoped session manager where appropriate, while ensuring that the microphone and playback are controlled according to the foreground lifecycle.
+
+Do not use a foreground service just to keep the assistant speaking in the background.
+
+Do not introduce background audio behavior that the user has not explicitly requested.
+
+---
+
+10. FOODFLOW APPLICATION INTEGRATION
+
+The voice assistant must understand the actual FoodFlow application.
+
+Inspect and reuse existing:
+
+- Restaurant data.
+- Food/menu data.
+- Customer information.
+- Cart functionality.
+- Restaurant details.
+- Search functionality.
+- Order information.
+- Existing navigation.
+- Existing application use cases.
+
+The assistant must not invent food items, prices, restaurant ratings, or availability.
+
+Example conversations
+
+User: "Suggest vegetarian food under 200 rupees."
+
+Assistant should:
+
+- Understand vegetarian preference.
+- Understand budget.
+- Search existing mock menu data or available data source.
+- Return matching food items.
+- Explain the recommendations through audio.
+
+User: "Add the second item to my cart."
+
+Assistant should:
+
+- Resolve the second item from the most recent recommendation list.
+- Validate that the item still exists.
+- Validate current availability.
+- Use the existing Add to Cart use case.
+- Confirm the result through audio.
+
+User: "What is in my cart?"
+
+Assistant should:
+
+- Read the existing cart state.
+- Explain the items and total.
+
+User: "Find a spicy meal for two."
+
+Assistant should:
+
+- Understand quantity and food preferences.
+- Search actual available menu data.
+- Recommend suitable combinations.
+
+Tool/action execution
+
+Do not allow Gemini to directly manipulate application state.
+
+Implement a controlled tool/action execution layer.
+
+Possible actions:
+
+- SearchRestaurants
+- SearchFoodItems
+- GetRestaurantDetails
+- GetCartSummary
+- AddItemToCart
+- RemoveCartItem
+- UpdateCartQuantity
+- NavigateToScreen
+- GetOrderStatus
+
+Only implement actions supported by the existing application.
+
+Each action must:
+
+1. Validate the request.
+2. Validate the item or restaurant ID.
+3. Execute through the corresponding domain use case.
+4. Return a structured result.
+5. Communicate success or failure through audio.
+
+Never let AI-generated text directly execute arbitrary application operations.
+
+Require confirmation for sensitive or consequential operations, such as placing an order or making a payment.
+
+Maintain the user's current application navigation state.
+
+If the user asks to navigate somewhere, use the existing navigation mechanism.
+
+---
+
+11. CONVERSATION CONTEXT AND MEMORY
+
+The assistant must remember the current conversation when the user changes screens.
+
+Example:
+
+User: "Suggest a vegetarian pizza."
+
+Assistant: "Here are three options."
+
+User navigates to the restaurant details screen.
+
+User: "What about the second one?"
+
+The assistant should understand that the second item refers to the previous recommendation.
+
+Requirements
+
+Maintain:
+
+- Conversation ID.
+- Session ID.
+- Conversation history.
+- Latest user request.
+- Latest AI response.
+- Recent recommendation IDs.
+- Selected restaurant context.
+- Relevant cart context.
+- Pending user action.
+- Current interaction state.
+
+Do not rely exclusively on Gemini's implicit conversation state.
+
+Maintain the required application-side context so it can be restored after reconnection when supported.
+
+Use bounded conversation history.
+
+Avoid sending the entire conversation indefinitely.
+
+Summarize older conversation context when appropriate.
+
+Do not store unnecessary sensitive customer information.
+
+Handle session expiration and conversation restoration.
+
+The same conversation must remain available while navigating between application screens.
+
+---
+
+12. CLEAN ARCHITECTURE AND MVI
+
+Strictly follow the existing FoodFlow architecture.
+
+First inspect the current package structure and naming conventions.
+
+Do not introduce a separate architectural pattern that conflicts with the existing application.
+
+Presentation layer
+
+Implement:
+
+- VoiceAssistantWidget.
+- VoiceAssistantScreen or equivalent reusable interface.
+- VoiceAssistantViewModel.
+- VoiceAssistantUiState.
+- VoiceAssistantIntent.
+- VoiceAssistantEvent.
+- VoiceAssistantUiEffect where needed.
+- Reusable audio visualizer components.
+- Reusable status components.
+
+Keep all state definitions and models in separate files.
+
+Do not place sealed classes or data classes inside ViewModels or Compose screen files.
+
+Composables must not contain business logic.
+
+Use lifecycle-aware state collection.
+
+Domain layer
+
+Create separate use cases for each meaningful operation.
+
+Examples:
+
+- ConnectVoiceAssistantUseCase
+- DisconnectVoiceAssistantUseCase
+- StartVoiceRecordingUseCase
+- StopVoiceRecordingUseCase
+- SendVoiceInputUseCase
+- SendTextMessageUseCase
+- InterruptAssistantResponseUseCase
+- PauseVoiceAssistantUseCase
+- ResumeVoiceAssistantUseCase
+- ObserveVoiceAssistantStateUseCase
+- ObserveConversationUseCase
+- ExecuteAssistantActionUseCase
+- RestoreConversationUseCase
+
+Do not create one giant use case containing all assistant functionality.
+
+Data layer
+
+Separate repository interfaces and implementations.
+
+Create appropriate abstractions for:
+
+- VoiceAssistantRepository.
+- WebSocketDataSource.
+- AudioRecordingDataSource.
+- AudioPlaybackDataSource.
+- ConversationDataSource.
+- AssistantActionDataSource.
+
+Use DTOs, domain models, and mapping classes in their correct packages.
+
+Use Hilt for dependency injection.
+
+Use Kotlin Coroutines and Flow.
+
+Use structured concurrency.
+
+Avoid GlobalScope.
+
+Infrastructure layer
+
+Keep the following responsibilities separate:
+
+- WebSocket connection management.
+- Gemini protocol handling.
+- Audio input processing.
+- Audio output processing.
+- Session management.
+- Interruption coordination.
+- Lifecycle coordination.
+
+Avoid oversized classes and god objects.
+
+Use interfaces where they provide genuine testability or replaceable implementations.
+
+Do not create unnecessary abstractions.
+
+---
+
+13. THREADING, PERFORMANCE, ANR, AND MEMORY MANAGEMENT
+
+Performance and stability are critical.
+
+The implementation must not cause ANRs, memory leaks, excessive battery usage, or memory exhaustion.
+
+Main thread
+
+Never perform these operations on the main thread:
+
+- Audio recording.
+- Audio encoding/decoding.
+- WebSocket message processing.
+- Large JSON parsing.
+- Audio buffering.
+- AI response processing.
+- Blocking network operations.
+- Heavy conversation processing.
+
+Use appropriate dispatchers and structured concurrency.
+
+Memory management
+
+Handle:
+
+- Bounded audio input buffers.
+- Bounded audio output buffers.
+- Bounded conversation history.
+- Proper cancellation.
+- No unbounded channels.
+- No unlimited message queues.
+- No unnecessary byte-array copying.
+- No retained Activity references.
+- No duplicated audio streams.
+- No leaked WebSocket listeners.
+- No stale ViewModel jobs.
+- No orphaned audio resources.
+
+Avoid retaining large audio data after playback.
+
+Release resources when the session is closed.
+
+Use backpressure instead of allowing incoming data to grow indefinitely.
+
+Battery and resource usage
+
+- Avoid unnecessary reconnect loops.
+- Avoid unnecessary audio processing.
+- Avoid recording while paused or closed.
+- Avoid unnecessary background operations.
+- Avoid keeping resources active when the assistant is not in use.
+
+---
+
+14. AUDIO FOCUS AND ANDROID AUDIO MANAGEMENT
+
+Implement proper Android audio focus and routing.
+
+Handle:
+
+- Audio focus acquisition.
+- Audio focus loss.
+- Temporary audio focus loss.
+- Other applications playing audio.
+- Incoming phone calls.
+- Bluetooth headset connection.
+- Wired headset connection.
+- Speaker routing.
+- Earpiece routing where appropriate.
+- Device disconnection.
+- Microphone permission revocation.
+- Recording initialization failures.
+- Playback initialization failures.
+
+Avoid feedback loops between speaker output and microphone input.
+
+Use suitable audio routing and echo cancellation where available.
+
+Release audio focus when the assistant is paused, closed, or no longer needs it.
+
+Ensure that the assistant does not unexpectedly take over the device's audio session.
+
+---
+
+15. ERROR HANDLING AND RECOVERY
+
+Implement a centralized and user-friendly error-handling mechanism.
+
+Handle at least:
+
+Permission errors
+
+- Microphone permission not granted.
+- Permission permanently denied.
+- Permission revoked while assistant is active.
+- Microphone unavailable.
+
+Connectivity errors
+
+- No internet.
+- WebSocket connection timeout.
+- Unexpected disconnection.
+- Reconnection failure.
+- Server unavailable.
+- Invalid response.
+
+Gemini errors
+
+- Invalid API key.
+- Authentication failure.
+- Invalid model.
+- Unsupported audio configuration.
+- Rate limit.
+- Free-tier quota exhausted.
+- Session expiration.
+- Request too large.
+- Invalid tool call.
+- Safety-related response restrictions.
+
+Audio errors
+
+- Recording initialization failure.
+- Unsupported audio format.
+- Audio buffer overflow.
+- Playback failure.
+- Audio interruption.
+- Audio focus loss.
+- Audio device unavailable.
+
+Application errors
+
+- Activity recreated.
+- Application backgrounded.
+- User navigates between screens.
+- Assistant closed during an active request.
+- Rapid repeated user requests.
+- Stale AI response.
+- Coroutine cancellation.
+- Unexpected application state.
+
+Error UI
+
+Display understandable messages.
+
+Examples:
+
+- "Connecting to your food assistant..."
+- "Microphone permission is required to speak."
+- "Connection lost. Trying to reconnect..."
+- "The AI assistant is temporarily unavailable."
+- "You've reached the current AI usage limit."
+- "Audio playback was interrupted."
+- "Please try again."
+
+Do not expose internal stack traces or API credentials to users.
+
+Provide appropriate retry or recovery actions.
+
+Do not treat coroutine cancellation as an application error.
+
+---
+
+16. FREE-TIER QUOTA AND FALLBACK STRATEGY
+
+Use the available Gemini free-tier capabilities only where currently supported.
+
+Verify the model's current availability, quota, audio support, and limitations.
+
+Implement:
+
+- Rate-limit handling.
+- Quota-exceeded handling.
+- Request timeout.
+- Controlled retries.
+- Usage-aware connection management.
+- Graceful error messages.
+
+Do not automatically retry quota-exceeded requests indefinitely.
+
+If real-time Gemini audio is unavailable because of quota or connectivity issues, clearly explain the situation.
+
+Provide a rule-based fallback using existing FoodFlow mock data for supported food searches and recommendations.
+
+For example:
+
+- Vegetarian recommendations.
+- Food under a budget.
+- Breakfast recommendations.
+- Spicy food recommendations.
+- Restaurant searches.
+
+Do not pretend the rule-based fallback is Gemini.
+
+Do not invent AI responses or food data.
+
+Keep the fallback architecture replaceable.
+
+---
+
+17. TESTING REQUIREMENTS
+
+Implement unit tests and integration tests for important behavior.
+
+Conversation tests
+
+1. Start a new conversation.
+2. Continue the conversation after navigation.
+3. Ask a follow-up question.
+4. Restore conversation after reconnecting.
+5. Verify bounded conversation history.
+6. Verify correct reference to previous recommendations.
+
+WebSocket tests
+
+1. Successful connection.
+2. Connection timeout.
+3. Authentication failure.
+4. Invalid response.
+5. Unexpected disconnection.
+6. Reconnection.
+7. Quota exceeded.
+8. Session expiration.
+9. Duplicate connection prevention.
+10. Explicit close prevents automatic reconnect.
+
+Audio tests
+
+1. Microphone permission denied.
+2. Successful recording.
+3. Audio chunk generation.
+4. Chunk ordering.
+5. Bounded buffering.
+6. Playback.
+7. Playback cancellation.
+8. Audio focus loss.
+9. Device disconnection.
+10. Resource release.
+
+Interruption tests
+
+1. Interrupt AI while speaking.
+2. Send a new request during playback.
+3. Verify previous playback stops immediately.
+4. Verify stale audio chunks are discarded.
+5. Verify the latest response is played.
+6. Rapid repeated interruptions.
+7. Verify conversation context remains intact.
+
+Lifecycle tests
+
+1. Minimize application during listening.
+2. Minimize application during AI playback.
+3. Verify audio stops immediately.
+4. Return to foreground.
+5. Verify conversation restoration.
+6. Navigate between multiple screens.
+7. Close assistant during active recording.
+8. Revoke microphone permission while active.
+9. Verify no audio or WebSocket resource leaks.
+
+Application integration tests
+
+1. Search food through voice.
+2. Request food within a budget.
+3. Ask for vegetarian food.
+4. Add a recommended item to the cart.
+5. Ask for cart summary.
+6. Navigate to restaurant details through voice.
+7. Verify existing cart functionality is preserved.
+
+---
+
+18. IMPLEMENTATION PROCESS
+
+Follow this sequence.
+
+Phase 1 – Analyze existing application
+
+Inspect:
+
+- Root project structure.
+- Existing Clean Architecture packages.
+- Existing MVI implementation.
+- Hilt configuration.
+- Navigation architecture.
+- Compose theme and reusable components.
+- Gemini integration, if present.
+- Retrofit/OkHttp/WebSocket setup.
+- Restaurant and food mock data.
+- Cart use cases and repository.
+- Application lifecycle handling.
+- Existing permissions and audio dependencies.
+
+Do not modify files blindly.
+
+Identify existing reusable components before creating new ones.
+
+Phase 2 – Architecture design
+
+Before implementation:
+
+- Define the global assistant architecture.
+- Define the shared session lifecycle.
+- Define the WebSocket abstraction.
+- Define audio input/output abstractions.
+- Define conversation state management.
+- Define interruption handling.
+- Define lifecycle handling.
+- Define the application action execution layer.
+- Define the MVI state, intent, and event contracts.
+
+Ensure the architecture supports one shared conversation across all screens.
+
+Phase 3 – Incremental implementation
+
+Implement in this order:
+
+1. Domain contracts and models.
+2. Shared assistant controller.
+3. WebSocket connection management.
+4. Gemini session integration.
+5. Audio recording.
+6. Audio streaming.
+7. Audio playback.
+8. Interruption handling.
+9. Conversation state persistence/restoration.
+10. Application lifecycle coordination.
+11. Global reusable Compose widget.
+12. Assistant conversation interface.
+13. FoodFlow use case integration.
+14. Error handling and fallback.
+15. Hilt dependency injection.
+16. Unit and integration tests.
+
+Compile and validate after each major phase.
+
+Phase 4 – Stability validation
+
+Verify:
+
+- No ANR.
+- No memory leaks.
+- No duplicate sessions.
+- No duplicate WebSocket connections.
+- No unexpected background playback.
+- No microphone remaining active after close.
+- No stale audio playback.
+- No conversation reset after navigation.
+- No regression in existing FoodFlow functionality.
+
+Phase 5 – Final report
+
+Provide:
+
+1. Architecture overview.
+2. Complete list of modified files.
+3. Complete list of newly created files.
+4. Explanation of shared session management.
+5. WebSocket communication flow.
+6. Audio recording and playback flow.
+7. Interruption implementation.
+8. Application lifecycle behavior.
+9. Gemini API and model configuration.
+10. Free-tier limitations.
+11. Error handling and recovery strategy.
+12. Memory and performance optimizations.
+13. Test results.
+14. Remaining limitations and backend/security dependencies.
+
+---
+
+19. FINAL ACCEPTANCE CRITERIA
+
+The implementation is accepted only when:
+
+- A reusable voice assistant is accessible across application screens.
+- Only one shared assistant session is maintained.
+- Only one shared ViewModel manages the assistant conversation.
+- Navigation does not restart the conversation.
+- Users can communicate using voice.
+- The AI responds using audio.
+- Users can interrupt AI speech at any time.
+- Previous audio stops immediately when interrupted.
+- New requests are processed without mixing old and new audio.
+- Pause, resume, and close work correctly.
+- WebSocket statuses are clearly visible.
+- All important errors are handled.
+- Audio resources are correctly managed.
+- Application backgrounding stops recording and playback.
+- Conversation context is preserved.
+- Food recommendations use actual FoodFlow data.
+- Supported application actions use existing domain use cases.
+- No ANR, memory leak, or unbounded audio buffering is introduced.
+- Existing FoodFlow functionality, UI, navigation, and theme remain intact.
+
+MOST IMPORTANT FINAL INSTRUCTION
+
+First understand the existing FoodFlow project completely. Then implement the voice assistant using the existing architecture and coding conventions.
+
+Do not just create a visually attractive microphone button or a dummy chatbot.
+
+Build a genuine, reusable, real-time conversational voice assistant with shared session management, bidirectional audio streaming, barge-in interruption, lifecycle awareness, proper error recovery, and actual FoodFlow integration.
+
+Do not claim that a feature works unless its implementation and relevant tests verify that behavior. If an API capability, authentication mechanism, or backend dependency is unavailable, document it clearly rather than silently substituting a fake implementation.

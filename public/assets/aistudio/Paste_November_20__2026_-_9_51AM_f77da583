@@ -1,0 +1,929 @@
+Task: Complete UI/UX Redesign, Offline-First Improvements, Networking Fixes & Production-Quality Enhancements for FoodFlow Android Application
+
+You are acting as a Senior Android Architect, Senior Kotlin Developer, UI/UX Designer, and Code Reviewer.
+
+I have already developed an Android food delivery application. I want you to thoroughly review the existing application and implement the improvements listed below.
+
+IMPORTANT: This is an enhancement of an existing project, NOT a new application.
+
+Do not rebuild the application from scratch. First understand the existing codebase, architecture, navigation, database, networking, order lifecycle, and UI implementation. Then implement the required changes.
+
+The application is an assessment project for a Senior Android Developer position. The implementation should demonstrate strong engineering skills, architectural understanding, problem-solving abilities, and attention to UI/UX details.
+
+---
+
+1. STRICT DEVELOPMENT RULES
+
+Follow these rules throughout the implementation:
+
+1. Do not remove any existing functionality.
+2. Do not break existing navigation or business logic.
+3. Do not introduce unnecessary architectural changes.
+4. Follow the existing Clean Architecture + MVI architecture.
+5. Continue using Kotlin and Jetpack Compose.
+6. Maintain proper separation between Presentation, Domain, and Data layers.
+7. Continue using the existing dependency injection framework.
+8. Use Kotlin Coroutines, Flow, StateFlow, and SharedFlow appropriately.
+9. Maintain Room as the local source of truth wherever applicable.
+10. Use Retrofit/OkHttp for REST API communication.
+11. Use WebSocket for real-time order updates where already implemented.
+12. Use WorkManager for reliable background synchronization.
+13. Avoid unnecessary dependencies.
+14. Avoid hardcoded business logic and duplicate implementations.
+15. Maintain backward compatibility with existing functionality.
+16. Do not introduce memory leaks, lifecycle issues, or unnecessary recompositions.
+17. Follow SOLID principles and Kotlin best practices.
+
+Before making changes, inspect the entire project and identify existing implementations that can be reused.
+
+2. SPLASH SCREEN IMPROVEMENTS
+
+Current issue:
+
+- A black screen appears before the splash screen becomes visible.
+
+Required changes:
+
+- Eliminate the unwanted black screen during application startup.
+- Configure the Android system splash screen correctly.
+- Ensure the system splash screen transitions smoothly into the application's splash screen.
+- Avoid unnecessary delays or blank frames.
+- Increase the branded splash screen display duration to approximately 3–4 seconds.
+- Remove unnecessary informational text such as:
+  - Preparing offline...
+  - Initializing local database...
+  - Loading local data...
+- Do not remove any underlying initialization, database, synchronization, or offline functionality.
+- Keep the splash screen visually attractive with a subtle logo animation and smooth transition.
+
+3. REMOVE MANUAL REFRESH AND ENABLE BACKGROUND SYNCHRONIZATION
+
+Current issue:
+
+- Dashboard screens display refresh icons.
+- Users need to manually refresh restaurant menus and categories.
+
+Required changes:
+
+- Remove manual refresh icons from all dashboard-related screens.
+- Automatically synchronize restaurant lists, menus, categories, offers, and other relevant data.
+- Synchronization should happen in the background.
+- Use WorkManager where appropriate for persistent synchronization.
+- Use appropriate Flow/StateFlow mechanisms to observe local database changes.
+- Refresh data when the application launches or resumes, based on suitable synchronization policies.
+- Avoid unnecessary API calls.
+- Implement sensible caching and synchronization intervals.
+- Do not block the UI while synchronization is happening.
+
+The UI should always display locally available data immediately and update automatically when fresh server data becomes available.
+
+4. DASHBOARD AND HOME SCREEN IMPROVEMENTS
+
+Current issue:
+
+- The application displays Food Preparing and Spice Garden even though the user has no active order.
+
+Required changes:
+
+- Do not display active-order information when there is no active order.
+- Show active order information only when a valid active order exists.
+- Remove hardcoded active-order content.
+- Make the dashboard state-driven using actual order information.
+
+4.1 Offers and Advertisement Banner
+
+Currently, only one offer banner is displayed.
+
+Improve it as follows:
+
+- Support multiple promotional banners.
+- Display banners in a horizontally scrollable carousel.
+- Add smooth auto-scrolling.
+- Add subtle scale, fade, or parallax animations.
+- Add page indicators.
+- Pause auto-scrolling when the user interacts with the carousel.
+- Resume scrolling appropriately.
+- Make the banners responsive to different screen sizes.
+- Ensure proper image loading and placeholder handling.
+
+The banner should look like a professional food delivery application.
+
+4.2 What's on Your Mind Section
+
+Improve the What's on Your Mind section.
+
+Requirements:
+
+- Use attractive category illustrations or images.
+- Add subtle entrance animations.
+- Add smooth scale animations when users select a category.
+- Use visually appealing circular or rounded category cards.
+- Add appropriate spacing and typography.
+- Ensure horizontal scrolling works smoothly.
+- Avoid excessive animations that affect performance.
+
+The section should look premium and engaging.
+
+4.3 Existing Order Tracking Banner
+
+When a user has an active order:
+
+- Display a prominent order-tracking banner on the dashboard.
+- Show restaurant name, order status, estimated delivery time, and relevant order information.
+- Add a button such as "Track Order".
+- Clicking the button should navigate directly to the live tracking screen.
+- The banner should disappear when the order is completed or cancelled.
+- Observe order status reactively from the local database and synchronization layer.
+
+5. BOTTOM NAVIGATION ANIMATIONS
+
+Improve the complete bottom navigation experience.
+
+Requirements:
+
+- Selected tab should display a filled icon.
+- Unselected tabs should display outlined icons.
+- Add smooth animated transitions between selected and unselected states.
+- Use subtle scale and color transitions.
+- Add a small indicator or selection animation where appropriate.
+- Maintain consistent icon dimensions and alignment.
+- Avoid layout jumps during selection.
+- Preserve existing navigation behavior and back-stack handling.
+
+The bottom navigation should feel polished and responsive.
+
+6. SEARCH SCREEN REDESIGN
+
+Current issue:
+
+- Restaurant listings look basic.
+
+Redesign the restaurant listing UI.
+
+Requirements:
+
+- Use attractive restaurant cards.
+- Display restaurant image, name, cuisine, rating, delivery estimate, and relevant pricing information.
+- Add appropriate badges such as Bestseller, Fast Delivery, or Popular when supported by actual data.
+- Improve typography, spacing, shadows, and card shapes.
+- Add subtle card entrance animations.
+- Improve search field design.
+- Add search suggestions and recent searches if appropriate.
+- Implement debounced search.
+- Support filtering and sorting without breaking existing functionality.
+- Display appropriate loading, empty, and error states.
+- Avoid unnecessary API requests while typing.
+
+7. CART SCREEN IMPROVEMENTS
+
+Current issue:
+
+- The empty cart screen has an unattractive header and empty-state design.
+- The application displays Pending Synchronization information.
+
+Required changes:
+
+7.1 Empty Cart
+
+- Redesign the cart header.
+- Fix alignment, spacing, and typography.
+- Make the empty cart illustration attractive.
+- Add a subtle animation to the empty cart icon or illustration.
+- Display a meaningful message encouraging users to explore restaurants.
+- Add an attractive CTA such as "Explore Restaurants".
+- Clicking the CTA should navigate to the restaurant listing or home screen.
+- Ensure the empty cart screen looks professional.
+
+7.2 Cart Synchronization
+
+- Completely remove Pending Synchronization and similar technical synchronization messages from the customer-facing UI.
+- Synchronization should remain an internal application/backend responsibility.
+- Do not remove the actual offline synchronization functionality.
+- Handle pending local operations internally.
+- Keep the cart UI focused on customer-facing information.
+
+7.3 Cart Behavior
+
+- Maintain cart consistency across application restarts.
+- Persist cart information locally.
+- Support adding, removing, and updating quantities.
+- Handle restaurant-specific cart restrictions properly.
+- Prevent duplicate cart operations.
+- Ensure cart totals are calculated correctly.
+
+8. REMOVE CUSTOMER-FACING MOCK TERMINOLOGY
+
+This application is being submitted for a technical assessment.
+
+Currently, the application displays words such as:
+
+- Mock Data
+- Mock API
+- Mock Restaurant
+- Mock Backend
+- Simulated Response
+- Demo Data
+
+Remove all such technical terminology from the customer-facing application.
+
+IMPORTANT:
+
+- Do not simply hide the text while leaving broken functionality.
+- Do not remove existing test infrastructure or development utilities.
+- Do not remove data sources that are required for the assessment.
+- Keep the implementation architecture clean.
+- Use realistic restaurant names, food items, descriptions, pricing, images, and order information.
+- Use meaningful data rather than obviously artificial placeholder content.
+
+Where an actual backend integration does not exist, maintain a clearly separated data-source implementation and do not falsely claim that an external production backend is connected.
+
+The end-user experience should feel like a real food delivery application.
+
+9. INVOICE DOWNLOAD FEATURE
+
+Add an invoice download feature.
+
+Requirements:
+
+- Provide an option to download the invoice for eligible orders.
+- Add a Download Invoice button in the order details screen.
+- Support completed orders.
+- Generate a properly formatted PDF invoice.
+- Include:
+  - Application/brand name
+  - Order ID
+  - Restaurant name
+  - Order date and time
+  - Customer details where available
+  - Item names
+  - Item quantities
+  - Item prices
+  - Taxes
+  - Delivery charges
+  - Discounts
+  - Final payable amount
+  - Payment method
+  - Payment status
+- Use proper currency formatting (INR).
+- Save the PDF using Android's recommended file-storage approach.
+- Support Android scoped storage.
+- Handle file-generation and storage errors.
+- Provide an option to open or share the downloaded invoice.
+- Ensure the invoice uses the actual order details rather than hardcoded values.
+
+10. ORDER SCREEN REDESIGN
+
+Improve the entire Your Orders section.
+
+10.1 Header
+
+- Redesign the header.
+- Fix unusual top spacing.
+- Improve title alignment, typography, and visual hierarchy.
+- Follow the same header design system used throughout the application.
+
+10.2 Active, Past, and Cancelled Tabs
+
+Current issue:
+
+- The tabs look basic.
+
+Requirements:
+
+- Create an attractive animated tab design.
+- Use a smooth sliding selection indicator.
+- Add subtle color and scale transitions.
+- Improve selected and unselected states.
+- Maintain proper spacing and alignment.
+- Ensure tab switching is smooth.
+- Preserve existing filtering and order history functionality.
+
+10.3 Order Cards
+
+Improve order cards to display:
+
+- Restaurant name and image.
+- Order ID.
+- Order date.
+- Order status.
+- Ordered items.
+- Total amount.
+- Relevant actions such as Track Order, View Details, Reorder, or Download Invoice.
+
+Only display actions that are valid for the particular order status.
+
+11. GLOBAL HEADER AND STATUS BAR REDESIGN
+
+Review every screen in the application.
+
+Current issue:
+
+- Order screen and Profile Settings have inconsistent or unattractive headers.
+- There is excessive top spacing.
+
+Requirements:
+
+- Establish a consistent application-wide header design.
+- Fix unnecessary top padding and blank space.
+- Respect system status bar and navigation bar insets.
+- Avoid double-applying system bar padding.
+- Ensure proper edge-to-edge implementation.
+- Use consistent title alignment, font size, weight, and spacing.
+- Ensure back buttons and action icons are properly aligned.
+- Apply the same design principles to:
+  - Home
+  - Search
+  - Cart
+  - Orders
+  - Profile
+  - Profile Settings
+  - Restaurant Details
+  - Order Details
+  - Checkout
+  - Live Tracking
+
+Do not remove required system insets merely to eliminate spacing. Fix the actual layout and WindowInsets implementation.
+
+12. PROFILE AND SETTINGS REDESIGN
+
+Improve the profile section.
+
+Requirements:
+
+- Fix header visibility and spacing.
+- Improve profile information presentation.
+- Use attractive settings cards.
+- Add proper icons and visual grouping.
+- Improve account-related actions.
+- Maintain existing settings functionality.
+- Ensure navigation and back behavior remain correct.
+
+13. LIVE ORDER TRACKING WITH GOOGLE MAPS
+
+This is an important feature.
+
+Currently, the application has a live order tracking screen with an event stream.
+
+Improve the entire experience.
+
+13.1 Google Maps Integration
+
+Use Google Maps SDK for Android to display the live delivery tracking map.
+
+Requirements:
+
+- Display restaurant location.
+- Display customer delivery location.
+- Display delivery partner location.
+- Use appropriate map markers.
+- Update the delivery partner's location when new location events arrive.
+- Animate marker movement smoothly instead of making it jump.
+- Display the delivery route where routing information is available.
+- Show appropriate camera positioning and zoom.
+- Maintain a clean map UI.
+- Handle loading, unavailable location, and permission states properly.
+- Keep API keys outside source code and configure them through secure build configuration.
+
+Do not generate fake real-time GPS updates and present them as actual GPS tracking.
+
+If a real delivery-partner location provider is unavailable, clearly isolate the location provider behind an interface so the assessment can demonstrate the event-driven tracking architecture without misrepresenting it as real-world GPS integration.
+
+13.2 Order Tracking Actions
+
+Once an order is placed:
+
+- Provide an option to return to the restaurant.
+- Provide an option to navigate back to the dashboard.
+- Display the active-order tracking banner on the dashboard.
+- Allow the user to reopen live tracking from the dashboard.
+
+Maintain the active order state across navigation and application restarts.
+
+13.3 Live Event Stream Expand/Collapse
+
+Current issue:
+
+- The live event stream is always expanded.
+
+Required changes:
+
+- Display the live event stream in a collapsible section.
+- Default state should be collapsed.
+- Clicking the section should expand it.
+- Clicking again should collapse it.
+- Add smooth expand/collapse animations.
+- Show the latest event summary when collapsed.
+- Display the complete event history when expanded.
+- Include event timestamps and order status.
+- Use a LazyColumn for longer event histories.
+- Maintain proper state handling and avoid unnecessary recompositions.
+
+14. OFFLINE-FIRST ARCHITECTURE AND NETWORK SYNCHRONIZATION
+
+This is one of the most important requirements of the application.
+
+I want the application to work smoothly in both online and offline scenarios.
+
+Review the entire existing offline-first architecture.
+
+14.1 Online Behavior
+
+When the internet is available:
+
+- Fetch fresh data from the remote data source.
+- Persist successful responses in Room.
+- Observe database changes through Flow.
+- Update the UI automatically.
+- Synchronize local cart and other eligible pending operations.
+- Handle server responses correctly.
+- Avoid displaying stale data when fresh data is available.
+
+14.2 Offline Behavior
+
+When the internet is unavailable:
+
+- Allow users to browse previously cached restaurants.
+- Allow users to browse cached categories and menus.
+- Allow users to add and remove cart items.
+- Persist cart changes locally.
+- Allow users to review the checkout information.
+- Handle order placement according to the defined offline-ordering policy.
+
+IMPORTANT ORDER PLACEMENT POLICY:
+
+An order must not be falsely presented as confirmed when the server has not accepted it.
+
+If a user attempts to place an order while offline:
+
+- Persist the order intent locally if the existing business rules permit it.
+- Mark it internally as pending submission.
+- Do not generate a confirmed order ID or confirmed status without server acknowledgement.
+- Display a clear network error or an appropriate offline-order message to the user.
+- Retry submission when connectivity returns, according to a safe retry policy.
+- Prevent duplicate orders using idempotency keys or an equivalent mechanism.
+
+When the server successfully accepts the order, update the local order state.
+
+14.3 Automatic Synchronization
+
+Implement reliable background synchronization using:
+
+- WorkManager.
+- NetworkConstraints.
+- Room.
+- Kotlin Coroutines.
+- Flow/StateFlow.
+- Repository pattern.
+
+Requirements:
+
+- Automatically detect connectivity changes.
+- Retry eligible failed operations.
+- Use exponential backoff where appropriate.
+- Handle duplicate requests.
+- Handle partially completed synchronization.
+- Handle process termination and application restarts.
+- Prevent simultaneous duplicate synchronization jobs.
+- Maintain data consistency.
+
+Synchronization status should remain internal and should not be displayed as technical information to customers.
+
+15. FIX CHECKOUT NETWORKING ISSUE
+
+Current issue:
+
+When the internet is connected and the user clicks Proceed to Checkout, the application displays:
+
+"We received an unexpected response. Showing saved data instead."
+
+This is incorrect behavior when a valid online request should succeed.
+
+Investigate the actual root cause instead of hiding the error message.
+
+Inspect:
+
+- Retrofit configuration.
+- OkHttp configuration.
+- API endpoint and HTTP method.
+- Request headers.
+- Request body serialization.
+- Authentication headers, if applicable.
+- Response model and DTO mapping.
+- HTTP status code handling.
+- JSON serialization/deserialization.
+- Content-Type headers.
+- Error response parsing.
+- Timeout configuration.
+- Repository implementation.
+- Exception handling.
+- Connectivity detection.
+- Checkout use case.
+- MVI state transitions.
+
+Determine why a successful internet connection is resulting in an unexpected-response fallback.
+
+Expected behavior:
+
+WHEN INTERNET IS AVAILABLE:
+
+1. Send the checkout request to the remote data source.
+2. Parse the actual server response.
+3. Validate the response.
+4. Persist the accepted order locally.
+5. Update the UI.
+6. Navigate to the appropriate order confirmation or tracking screen.
+
+WHEN INTERNET IS UNAVAILABLE:
+
+1. Detect the network failure.
+2. Do not incorrectly report a server response parsing issue.
+3. Do not falsely confirm the order.
+4. Preserve the cart.
+5. Show a meaningful network error.
+6. Retry safely when appropriate.
+
+IMPORTANT:
+
+Do not use a broad catch block that converts every exception into a successful local fallback.
+
+Differentiate between:
+
+- No internet connection.
+- Connection timeout.
+- Socket timeout.
+- DNS failure.
+- HTTP 400 errors.
+- HTTP 401/403 errors.
+- HTTP 404 errors.
+- HTTP 500 errors.
+- Invalid JSON.
+- Unexpected response structure.
+- Serialization errors.
+- Database errors.
+- Unknown exceptions.
+
+Represent these conditions using appropriate sealed result/error types.
+
+16. APPLICATION THEME AND COMPLETE UI/UX REDESIGN
+
+Redesign the entire application theme.
+
+I want a modern, premium, polished food delivery application with a ChatGPT-inspired level of visual simplicity and consistency, combined with an elegant electric-accent visual identity.
+
+Do not copy another application's branding or exact UI.
+
+Design direction:
+
+- Clean and modern.
+- Premium appearance.
+- Attractive food imagery.
+- Elegant typography.
+- Consistent spacing.
+- Smooth animations.
+- Subtle shadows and elevation.
+- Rounded cards.
+- Professional color combinations.
+- Good contrast and accessibility.
+
+Suggested visual direction:
+
+- Neutral background surfaces.
+- Deep charcoal or dark text.
+- Fresh green as a primary food-related accent.
+- Electric teal or a subtle electric accent for highlights.
+- Carefully selected secondary colors for offers and statuses.
+
+Implement:
+
+- Centralized Material 3 color system.
+- Light theme.
+- Dark theme.
+- Consistent typography.
+- Reusable shapes and spacing.
+- Reusable buttons.
+- Reusable cards.
+- Reusable text fields.
+- Consistent iconography.
+- Consistent screen headers.
+
+Do not apply random colors independently to individual screens.
+
+Animation Requirements
+
+Use animations where they improve user experience:
+
+- Splash screen transition.
+- Dashboard category animations.
+- Offer carousel animations.
+- Bottom navigation selection animations.
+- Restaurant card entrance animations.
+- Add-to-cart feedback.
+- Cart item quantity transitions.
+- Empty cart illustration animation.
+- Order tab selection animation.
+- Order status transitions.
+- Live tracking marker movement.
+- Event stream expand/collapse.
+- Loading skeletons.
+- Screen transitions.
+
+Use Compose animation APIs appropriately, such as:
+
+- AnimatedVisibility.
+- animateContentSize.
+- animateColorAsState.
+- updateTransition.
+- Crossfade.
+- AnimatedContent.
+- animateFloatAsState.
+
+Avoid unnecessary animation and ensure good performance.
+
+17. GLOBAL ERROR HANDLING
+
+Review the entire application for error-handling issues.
+
+Implement consistent handling for:
+
+- Internet unavailable.
+- Slow network.
+- Request timeout.
+- Server unavailable.
+- Invalid server response.
+- Authentication failures.
+- Database failures.
+- Image loading failures.
+- Empty data.
+- Invalid input.
+- Cart validation errors.
+- Checkout failures.
+- Order submission failures.
+- WebSocket disconnection.
+- WebSocket reconnection.
+- Location permission denied.
+- Google Maps loading failures.
+- Invoice generation failures.
+- Storage permission or file access errors.
+
+Requirements:
+
+- Use a centralized error-handling approach.
+- Maintain meaningful domain-level error types.
+- Convert low-level exceptions into understandable UI messages.
+- Do not expose technical stack traces to end users.
+- Avoid silently swallowing exceptions.
+- Add proper logging for debugging.
+- Provide retry actions where appropriate.
+- Maintain the existing MVI state/event pattern.
+
+18. NETWORK AND WEBSOCKET RELIABILITY
+
+Review the existing REST API and WebSocket implementations.
+
+REST:
+
+- Use appropriate request and response models.
+- Handle HTTP error responses properly.
+- Configure sensible timeouts.
+- Avoid duplicate API calls.
+- Ensure correct serialization.
+- Handle authentication errors appropriately.
+
+WebSocket:
+
+- Maintain connection lifecycle correctly.
+- Reconnect after disconnection.
+- Use exponential backoff.
+- Avoid duplicate event subscriptions.
+- Handle application background/foreground transitions.
+- Parse incoming events safely.
+- Persist important order events locally.
+- Ensure order status remains consistent after reconnecting.
+
+The order tracking screen should continue displaying the latest known order status even when the WebSocket disconnects.
+
+19. PERFORMANCE AND CODE QUALITY
+
+Review the entire application for:
+
+- Unnecessary recompositions.
+- Incorrect StateFlow collection.
+- Lifecycle-unaware Flow collection.
+- Memory leaks.
+- Duplicate network calls.
+- Main-thread database operations.
+- Large image loading issues.
+- Inefficient LazyColumn implementations.
+- Incorrect state ownership.
+- Navigation issues.
+- Resource leaks.
+- Coroutine cancellation issues.
+- Incorrect dispatcher usage.
+- Unnecessary object allocations.
+
+Use:
+
+- collectAsStateWithLifecycle.
+- remember appropriately.
+- derivedStateOf when useful.
+- Stable UI models where appropriate.
+- Proper coroutine scopes.
+- Dispatchers.IO for appropriate blocking operations.
+- Dispatchers.Default for CPU-intensive operations.
+- Immutable UI state.
+- Proper state hoisting.
+
+Do not optimize blindly. Make improvements based on actual code inspection.
+
+20. TESTING REQUIREMENTS
+
+Do not consider the implementation complete merely because the project builds.
+
+Add or update tests for important functionality.
+
+Unit tests:
+
+- Cart calculations.
+- Add/remove cart items.
+- Restaurant-specific cart validation.
+- Checkout validation.
+- Order placement.
+- Offline order handling.
+- Synchronization decisions.
+- Retry behavior.
+- API error mapping.
+- Order status transitions.
+- Invoice calculations.
+
+Repository tests:
+
+- Local data retrieval.
+- Remote data retrieval.
+- Cache updates.
+- Offline fallback.
+- Synchronization behavior.
+- Duplicate submission prevention.
+
+ViewModel/MVI tests:
+
+- Loading state.
+- Success state.
+- Error state.
+- Empty state.
+- Cart state changes.
+- Checkout state transitions.
+- Order tracking events.
+
+UI tests where practical:
+
+- Empty cart.
+- Restaurant selection.
+- Checkout.
+- Order history tabs.
+- Tracking screen.
+- Navigation.
+
+21. FINAL APPLICATION ACCEPTANCE CRITERIA
+
+Before completing the work, verify the following:
+
+1. No black screen before splash.
+2. Splash screen displays for approximately 3–4 seconds.
+3. No unnecessary offline initialization text.
+4. No manual refresh buttons on dashboard screens.
+5. Restaurant menus and categories synchronize automatically.
+6. No active order appears when the user has no active order.
+7. Multiple horizontally scrollable promotional banners work.
+8. Home category section has attractive animations.
+9. Bottom navigation has animated filled/outlined icons.
+10. Restaurant search results have improved UI.
+11. Empty cart has an attractive animated illustration.
+12. No customer-facing pending synchronization information.
+13. No customer-facing mock terminology.
+14. Invoice PDF can be downloaded and shared.
+15. Orders screen and tabs have improved UI.
+16. Headers are consistent across the entire application.
+17. Profile settings screen has improved layout.
+18. Google Maps is integrated into live order tracking.
+19. Active orders can be reopened from the dashboard.
+20. Live event stream supports expand/collapse.
+21. Offline-first functionality works.
+22. Online checkout works without unexpected fallback errors.
+23. Offline order attempts are handled correctly.
+24. Background synchronization works reliably.
+25. WebSocket reconnection works correctly.
+26. No duplicate orders are generated.
+27. All important network errors are handled.
+28. Existing functionality remains intact.
+29. Light and dark themes work correctly.
+30. No critical crashes or compilation errors.
+
+22. IMPLEMENTATION APPROACH
+
+Follow this implementation sequence:
+
+PHASE 1 — PROJECT AUDIT
+
+- Inspect the complete project structure.
+- Understand all existing modules.
+- Identify architecture and dependencies.
+- Review all screens.
+- Review API integration.
+- Review Room database.
+- Review WorkManager implementation.
+- Review WebSocket implementation.
+- Identify the checkout fallback issue.
+- Identify existing bugs and technical debt.
+
+First provide a concise audit report containing:
+
+- Existing architecture.
+- Existing functionality.
+- Issues discovered.
+- Files/modules that need modifications.
+- Proposed implementation approach.
+
+PHASE 2 — NETWORKING AND DATA LAYER
+
+- Fix the checkout networking issue.
+- Improve API error handling.
+- Review offline-first data flow.
+- Fix synchronization.
+- Improve WebSocket reliability.
+- Ensure duplicate order prevention.
+- Add required tests.
+
+PHASE 3 — UI/UX REDESIGN
+
+- Implement the new theme.
+- Fix splash screen.
+- Redesign dashboard.
+- Improve restaurant listings.
+- Redesign cart.
+- Improve order history.
+- Improve profile/settings.
+- Improve live tracking.
+- Add animations.
+- Add invoice download.
+
+PHASE 4 — COMPLETE APPLICATION VALIDATION
+
+- Build the entire project.
+- Run unit tests.
+- Run relevant UI tests.
+- Fix compilation errors.
+- Fix runtime crashes.
+- Validate online scenarios.
+- Validate offline scenarios.
+- Validate synchronization.
+- Validate order lifecycle.
+- Validate navigation.
+
+Do not stop after providing suggestions or code snippets. Implement the actual changes in the existing project.
+
+If you encounter an API that is unavailable, inspect the existing implementation and clearly isolate the missing integration rather than inventing a successful server response.
+
+23. FINAL REPORT REQUIRED
+
+After implementation, provide a detailed report containing:
+
+1. All files modified.
+2. All new files created.
+3. All removed or replaced implementations, with reasons.
+4. UI/UX improvements implemented.
+5. Networking issues identified and fixed.
+6. Offline-first architecture improvements.
+7. Synchronization implementation details.
+8. WebSocket improvements.
+9. Google Maps integration details.
+10. Invoice implementation details.
+11. Tests added.
+12. Tests executed and their results.
+13. Build status.
+14. Known remaining issues.
+15. External configuration required, such as Google Maps API key or backend credentials.
+16. Any functionality that could not be fully verified.
+
+Create an additional Issue and Error Report with:
+
+- Issue description.
+- Root cause.
+- Severity (Critical / High / Medium / Low).
+- Files affected.
+- Fix implemented.
+- Validation performed.
+- Remaining limitations, if any.
+
+IMPORTANT FINAL INSTRUCTIONS:
+
+- Prioritize correctness over speed.
+- Do not make superficial UI changes while ignoring underlying functionality.
+- Do not hide errors to make the application appear successful.
+- Do not use fake success responses.
+- Do not remove offline-first capabilities.
+- Do not introduce unnecessary complexity.
+- Preserve the existing Clean Architecture and MVI implementation.
+- Maintain production-quality Kotlin code.
+- Ensure the final application is visually impressive, technically sound, and easy to explain during a Senior Android Developer assessment.
+
+The final goal is to deliver a polished, reliable, offline-first food delivery Android application that demonstrates strong Kotlin, Jetpack Compose, Clean Architecture, MVI, Room, Retrofit, WorkManager, Coroutines, Flow, WebSocket, and Android engineering skills.

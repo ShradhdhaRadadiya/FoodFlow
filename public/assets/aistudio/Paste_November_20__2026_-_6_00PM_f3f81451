@@ -1,0 +1,864 @@
+FoodFlow – Complete Global AI Voice Assistant UI/UX Refactoring, Audio Fixes & Functional Improvements
+
+Analyze my existing FoodFlow Android application and refactor the current Global AI Voice Assistant.
+
+The existing assistant has several UI/UX issues, audio problems, non-functional controls, bottom-sheet layout problems, and poor content presentation.
+
+I want you to improve the existing implementation and make it polished, user-friendly, reliable, and production-quality.
+
+IMPORTANT: Do not simply redesign the UI. Fix the underlying functionality of every interaction as well.
+
+Do not break existing FoodFlow functionality, navigation, theme, architecture, or business logic.
+
+---
+
+1. SIMPLIFY ASSISTANT CONTROLS – ONLY SPEAK AND STOP
+
+For the current implementation, I want only two primary voice controls:
+
+1. Speak
+2. Stop
+
+Remove the following controls completely from the assistant UI:
+
+- Pause.
+- Resume.
+- Volume.
+- Mute.
+- Any additional audio controls that are not currently necessary.
+
+Do not display controls that are placeholders or whose functionality is not properly implemented.
+
+Speak button
+
+When the user taps Speak:
+
+- Request microphone permission if required.
+- Start microphone recording.
+- Establish or reuse the existing assistant session.
+- Start streaming voice input to Gemini.
+- Update the UI to Listening.
+- Display the appropriate listening animation.
+- Process the user's request.
+- Generate the AI response.
+- Play the AI response through audio.
+- Display the appropriate response status.
+
+Stop button
+
+When the user taps Stop:
+
+- Stop microphone recording immediately.
+- Stop sending audio input.
+- Stop current AI audio playback immediately.
+- Cancel the active response generation where supported.
+- Cancel active audio processing.
+- Clear pending playback buffers.
+- Prevent stale audio from playing afterward.
+- Update the UI to the correct idle/stopped state.
+
+Do not terminate the entire shared assistant session unnecessarily.
+
+The Stop button must always perform its actual operation, not just change the UI icon.
+
+Button design
+
+- Keep Speak and Stop in fixed positions.
+- Maintain identical dimensions.
+- Do not shift the layout when changing interaction states.
+- Use smooth icon transitions.
+- Use clear visual states for active listening and stopped states.
+- Avoid unnecessary controls and visual clutter.
+
+There should be no Pause, Resume, Volume, or Mute controls anywhere in the current assistant interface.
+
+---
+
+2. INCREASE AI AUDIO OUTPUT VOLUME
+
+Currently, AI voice responses are extremely low, and users cannot hear them properly.
+
+Investigate and fix the actual playback issue.
+
+Requirements:
+
+- Increase the perceived AI speech volume appropriately.
+- Verify the audio output volume and playback configuration.
+- Check AudioTrack or the existing playback implementation.
+- Verify audio sample format, encoding, sample rate, and channel configuration.
+- Check whether audio normalization or gain adjustment is required.
+- Avoid clipping, distortion, and excessive amplification.
+- Handle Android audio focus correctly.
+- Ensure the correct audio output route is selected.
+- Handle speaker, Bluetooth, and wired headset routing.
+- Verify volume behavior across different devices.
+
+Do not simply increase the system media volume programmatically.
+
+Do not introduce unsafe amplification.
+
+Provide an appropriate configurable playback gain mechanism if needed.
+
+Test actual playback and ensure the AI response is clearly audible.
+
+---
+
+3. COMPLETE VOICE ASSISTANT UI REDESIGN
+
+I do not like the current assistant UI.
+
+Refactor the expanded assistant interface to look like a premium AI-powered food delivery application.
+
+Remove unnecessary conversation UI
+
+I do not want:
+
+- A traditional live conversation layout.
+- A large chat-history section.
+- A permanent list of previous messages.
+- Unnecessary conversational decorations.
+- Repeated textual responses.
+- An oversized chatbot interface.
+
+The assistant should feel like a modern voice-controlled food assistant, not a messaging application.
+
+New expanded assistant design
+
+Create a compact, attractive, visually balanced assistant interface.
+
+Include:
+
+- FoodFlow AI assistant identity.
+- Attractive animated voice visualization.
+- Clear current interaction status.
+- Large, easily accessible Speak button.
+- Stop button.
+- Close/minimize control.
+- Optional text input.
+- Small, well-designed latest-request and response area.
+- Relevant quick suggestion chips when appropriate.
+
+Use the existing FoodFlow design system, typography, theme, and colors.
+
+Do not introduce unrelated colors or a completely different design language.
+
+Avoid excessive empty space and oversized controls.
+
+Use subtle Compose animations.
+
+The expanded assistant must look good on different screen sizes.
+
+---
+
+4. FIX MICROPHONE AND STOP ICON POSITION SHIFT
+
+Currently, when I click the microphone icon and then the stop icon, the icon position changes.
+
+This creates an unprofessional visual experience.
+
+Requirements:
+
+- Keep the primary Speak/Stop control in exactly the same position.
+- Maintain identical dimensions.
+- Maintain identical alignment.
+- Use a fixed-size container.
+- Change only the icon and visual state.
+- Use subtle crossfade or rotation animations if appropriate.
+- Do not change the parent layout dimensions when the state changes.
+- Prevent other controls from shifting position.
+
+All assistant controls should remain visually stable during state transitions.
+
+---
+
+5. IMPROVE ASSISTANT STATUS AND LOADING EXPERIENCE
+
+Currently, after a user submits a request, the UI does not clearly communicate what the assistant is doing.
+
+Add a clear interaction status system.
+
+Examples:
+
+State| UI message
+Idle| Ready when you are
+Connecting| Connecting to FoodFlow AI...
+Listening| Listening to you...
+Processing| Understanding your request...
+Thinking| Finding the best options for you...
+Responding| Preparing your answer...
+Speaking| Speaking...
+Interrupted| Response interrupted
+Reconnecting| Reconnecting...
+Error| Something went wrong
+
+Do not add a Pause state or Pause control to the UI.
+
+Use attractive animations and loading indicators.
+
+Expected interaction
+
+When the user makes a request:
+
+1. Immediately display the latest request.
+2. Show an appropriate processing indicator.
+3. Keep the user informed while the AI processes the request.
+4. Display the actual response when available.
+5. Play the response audio.
+6. Update the status to the correct final state.
+
+Do not leave the user staring at an unchanged screen.
+
+Do not display fake loading progress.
+
+Handle timeout and failure states properly.
+
+---
+
+6. FIX DUPLICATE TEXT AND IMPROVE RESPONSE FORMATTING
+
+Currently, restaurant recommendations and descriptions are sometimes displayed twice.
+
+For example, the assistant displays a restaurant list inside a text paragraph and then displays the same restaurants again as individual restaurant cards.
+
+This is not acceptable.
+
+Implement structured AI response rendering.
+
+Expected response structure
+
+The AI response should contain structured data such as:
+
+- Response summary.
+- Response type.
+- Restaurant recommendations.
+- Food recommendations.
+- Relevant IDs.
+- Recommendation explanations.
+- Available application actions.
+- Optional spoken response.
+
+UI rendering rules
+
+Restaurant recommendations:
+
+Display restaurant cards only.
+
+Do not repeat restaurant names and descriptions in a separate paragraph.
+
+Food recommendations:
+
+Display food item cards only.
+
+Do not repeat the same food items in a textual list.
+
+Cart-related responses:
+
+Use the existing cart UI or a compact cart summary.
+
+Simple conversational responses:
+
+Display a short text response.
+
+Error responses:
+
+Display a clear error message with an appropriate retry action.
+
+Navigation requests:
+
+Perform the supported navigation action and provide concise confirmation.
+
+Additional requirements
+
+- Do not display raw JSON.
+- Do not display duplicate recommendation content.
+- Do not display the same item twice unless explicitly requested.
+- Validate every restaurant and food ID against existing application data.
+- Use existing restaurant and product cards.
+- Reuse existing Add to Cart functionality.
+- Never invent prices, availability, ratings, or restaurant details.
+
+Create a response renderer that selects the correct UI component based on the structured response type.
+
+Keep the response renderer separate from the ViewModel and Compose screen.
+
+---
+
+7. CRITICAL: FIX BOTTOM SHEET CONTENT OVERLAPPING AND LAYERING ISSUES
+
+Currently, some assistant content, restaurant cards, food cards, and result messages overlap with the bottom sheet or appear partially hidden behind it.
+
+The UI looks broken and is difficult to use.
+
+Inspect the complete Compose layout hierarchy and identify the actual cause.
+
+Expected behavior
+
+When the assistant bottom sheet is open:
+
+- Its content must remain properly positioned.
+- Restaurant cards must not be covered by the bottom sheet.
+- Food recommendation cards must not be clipped.
+- Important messages must not be hidden.
+- Popup or alert-style content must appear in the correct foreground layer.
+- The assistant controls must remain accessible.
+- No two UI components should unintentionally overlap.
+
+Foreground result presentation
+
+When the AI returns restaurant or food recommendations that need to appear above the current screen:
+
+- Display the result cards in a properly positioned foreground layer.
+- Use appropriate elevation and z-index.
+- Ensure cards are not hidden behind the bottom sheet.
+- Avoid placing important content outside the visible screen.
+- Keep the result content visually connected to the assistant.
+- Make the cards scrollable when multiple results are returned.
+- Ensure the bottom sheet and result cards do not compete for the same space.
+
+If an alert-style or popup presentation is appropriate, use a well-designed Compose overlay, dialog, or popup with proper positioning.
+
+Do not blindly use high z-index values to cover other UI elements.
+
+Choose the correct layout architecture based on the actual screen hierarchy.
+
+Layout requirements
+
+- Respect system bars and window insets.
+- Respect bottom navigation.
+- Avoid clipping.
+- Avoid content being drawn behind other surfaces.
+- Maintain proper spacing between the sheet and foreground content.
+- Support different screen heights.
+- Handle keyboard visibility.
+- Support scrolling without gesture conflicts.
+
+Test this behavior on Home, Search, Restaurant Details, Cart, and other relevant screens.
+
+---
+
+8. FIX BOTTOM SHEET DESIGN AND USABILITY
+
+The current expanded bottom sheet does not look user-friendly.
+
+Completely refine its layout while preserving existing FoodFlow styling.
+
+Requirements:
+
+- Proper drag handle.
+- Balanced spacing.
+- Clear title and close/minimize action.
+- Compact status section.
+- Proper assistant visualizer.
+- Clearly positioned Speak and Stop controls.
+- Properly aligned text input.
+- Scrollable response content.
+- No overlapping controls.
+- No unnecessary empty space.
+- No excessive rounded containers.
+- Consistent typography.
+- Responsive layout.
+
+Make the bottom sheet feel like a polished native application component.
+
+Do not make it look like a basic chatbot popup.
+
+---
+
+9. PERSISTENT GLOBAL BOTTOM SHEET ACROSS NAVIGATION
+
+Currently, when the AI assistant bottom sheet is open and the user clicks a restaurant or food item, navigation occurs and the bottom sheet disappears.
+
+I want the assistant to remain available across screens.
+
+Expected behavior
+
+1. User opens the AI assistant.
+2. Bottom sheet expands.
+3. User asks for restaurants.
+4. AI displays restaurant cards.
+5. User clicks one restaurant.
+6. Application navigates to restaurant details.
+7. The AI assistant remains available.
+8. The bottom sheet retains its previous visibility and expansion state.
+9. User can continue the existing interaction.
+
+The assistant must not restart.
+
+The conversation must not be cleared.
+
+The WebSocket session must not be duplicated.
+
+Architecture
+
+Host the assistant at the appropriate application/root navigation level.
+
+Do not attach the assistant bottom sheet to individual screen Composables.
+
+Use the existing navigation architecture.
+
+Ensure that screen navigation does not destroy the shared assistant controller, ViewModel, or session.
+
+Keep the assistant's visibility and expansion state in an appropriate shared state holder.
+
+Avoid creating duplicate bottom sheets when navigating between screens.
+
+---
+
+10. MAKE THE BOTTOM SHEET DRAGGABLE
+
+Currently, the assistant bottom sheet is not draggable properly.
+
+Implement natural, smooth drag behavior.
+
+Requirements:
+
+- Add a visible drag handle.
+- Allow dragging upward to expand.
+- Allow dragging downward to collapse.
+- Support intermediate sheet positions.
+- Use smooth animations.
+- Handle gesture cancellation.
+- Avoid conflicts with scrolling inside the sheet.
+- Preserve correct behavior when the keyboard is open.
+
+Required sheet positions
+
+Support at least:
+
+- Hidden.
+- Collapsed.
+- Half-expanded (approximately 50% of available height).
+- Expanded (approximately 70% or more, according to available space).
+
+Example:
+
+If the assistant is expanded to approximately 70% and the user drags it downward, it should smoothly settle around 50%.
+
+If the user drags further down, it should collapse.
+
+If the user drags upward, it should expand again.
+
+Do not implement a sheet that can only switch between open and closed.
+
+Use appropriate Compose Material 3 bottom-sheet APIs or a custom anchored draggable implementation based on the existing dependencies.
+
+Respect window insets and available screen height.
+
+---
+
+11. FIX KEYBOARD OVERLAPPING TEXT INPUT
+
+Currently, tapping the text input opens the keyboard, but the input field becomes hidden or overlaps with the keyboard.
+
+Fix this completely.
+
+Requirements:
+
+- Use correct IME/window inset handling.
+- Keep the text input visible above the keyboard.
+- Keep the send button accessible.
+- Resize or adjust the bottom sheet appropriately.
+- Prevent the keyboard from covering the latest response.
+- Allow the user to scroll response content.
+- Preserve the current input text.
+- Avoid unnecessary layout jumps.
+- Handle keyboard open/close transitions smoothly.
+
+Use appropriate Compose APIs such as:
+
+- imePadding()
+- WindowInsets.ime
+- adjustResize
+
+Use only the APIs required by the current window and Compose configuration.
+
+Do not apply multiple conflicting inset modifiers.
+
+Test on different Android screen sizes.
+
+---
+
+12. LATEST REQUEST AND RESPONSE VISIBILITY
+
+I do not want a traditional chat-history interface, but I still want the assistant to retain the messages.
+
+Expected behavior
+
+- Show the latest user request.
+- Show the latest AI response.
+- Keep older messages available above the latest messages when the user scrolls upward.
+- Automatically scroll to the latest request/response when a new interaction completes.
+- Do not permanently show an oversized history section.
+- Use a compact scrollable conversation area.
+- Keep the latest response visible by default.
+- Avoid duplicating the same response in different sections.
+
+Use LazyColumn or an appropriate efficient scrolling component.
+
+Implement automatic scrolling carefully.
+
+Do not continuously force-scroll while the user is reading older messages.
+
+If the user manually scrolls upward, respect their reading position until a new interaction or explicit scroll-to-latest action is appropriate.
+
+The UI should prioritize the latest interaction without losing conversation context.
+
+---
+
+13. FOOD AND RESTAURANT RESULT PRESENTATION
+
+The assistant must display actual FoodFlow restaurant and food data.
+
+For structured recommendations:
+
+- Use existing restaurant cards.
+- Use existing food item cards.
+- Use existing images.
+- Use actual prices.
+- Use actual ratings.
+- Use existing availability information.
+- Use the existing Add to Cart action.
+
+Do not create a second set of custom cards that look different from the existing application.
+
+Do not duplicate recommendation names in text and cards.
+
+When the user clicks a card, navigate through the existing navigation mechanism.
+
+Keep the assistant open during navigation.
+
+When the user requests an application action, execute it through the existing domain use case.
+
+Never allow AI-generated text to bypass application validation.
+
+---
+
+14. AUDIO, SESSION, AND LIFECYCLE MANAGEMENT
+
+Preserve the existing global voice assistant architecture.
+
+Use:
+
+- One shared VoiceAssistantViewModel.
+- One shared conversation/session manager.
+- One WebSocket connection manager.
+- One audio recording manager.
+- One audio playback manager.
+- One reusable Compose assistant widget.
+
+Do not create separate assistant sessions or ViewModels for every screen.
+
+Interruption handling
+
+The user must be able to interrupt AI speech by starting a new voice request where the selected Gemini API supports it.
+
+When interrupted:
+
+- Stop old playback immediately.
+- Cancel the old response job.
+- Clear stale audio buffers.
+- Discard stale response chunks.
+- Process the new request.
+- Preserve conversation context.
+
+Use request IDs or turn IDs to prevent stale responses from appearing.
+
+Lifecycle
+
+When the application enters the background:
+
+- Stop microphone recording.
+- Stop audio transmission.
+- Stop AI audio playback.
+- Cancel active audio operations safely.
+- Preserve conversation context.
+- Prevent unexpected background playback.
+
+When the application returns to the foreground:
+
+- Restore the assistant interface if appropriate.
+- Restore conversation history.
+- Check session validity.
+- Reconnect when necessary.
+- Do not automatically start recording.
+
+Do not use a foreground service just to keep the assistant speaking in the background.
+
+---
+
+15. CLEAN ARCHITECTURE AND MVI
+
+Follow the existing FoodFlow architecture strictly.
+
+Do not introduce unnecessary architectural changes.
+
+Presentation
+
+Maintain separate files for:
+
+- VoiceAssistantScreen.
+- VoiceAssistantBottomSheet.
+- VoiceAssistantWidget.
+- VoiceAssistantViewModel.
+- VoiceAssistantUiState.
+- VoiceAssistantIntent.
+- VoiceAssistantEvent.
+- AssistantResponseRenderer.
+- AudioVisualizer.
+- AssistantStatusIndicator.
+- AssistantControls.
+- AssistantInputBar.
+
+Adapt names and component boundaries to the existing project.
+
+Domain
+
+Maintain separate use cases for meaningful operations, such as:
+
+- StartVoiceRecordingUseCase.
+- StopVoiceRecordingUseCase.
+- StopAssistantUseCase.
+- SendVoiceInputUseCase.
+- SendTextInputUseCase.
+- InterruptAssistantResponseUseCase.
+- ObserveAssistantStateUseCase.
+- ObserveConversationUseCase.
+- ExecuteAssistantActionUseCase.
+
+Create only the use cases needed by the actual implementation.
+
+Each meaningful use case should have its own file.
+
+Data and infrastructure
+
+Keep separate responsibilities for:
+
+- Audio recording.
+- Audio playback.
+- Audio focus.
+- WebSocket communication.
+- Gemini communication.
+- Conversation management.
+- Interruption handling.
+- Session lifecycle.
+
+Keep repository interfaces separate from their implementations.
+
+Do not place data classes or sealed classes inside Compose files or ViewModels.
+
+Do not put business logic inside Composables.
+
+Use StateFlow, Kotlin Coroutines, Hilt, and lifecycle-aware state collection.
+
+---
+
+16. PERFORMANCE AND STABILITY
+
+The UI refactoring must not introduce ANR, memory leaks, or audio instability.
+
+Verify:
+
+- No duplicate audio playback.
+- No duplicate microphone recording.
+- No duplicate WebSocket connections.
+- No unbounded audio buffers.
+- No unnecessary recompositions.
+- No leaked Activity references.
+- No stale response playback.
+- No background microphone usage.
+- No audio playback after Stop.
+- No infinite loading indicator.
+- No UI freeze during response processing.
+- No keyboard-related layout instability.
+- No bottom-sheet gesture conflicts.
+- No result cards hidden behind the sheet.
+
+Use structured concurrency and proper cancellation.
+
+Keep expensive operations away from the main thread.
+
+Ensure bottom-sheet animation and audio visualizer rendering remain efficient.
+
+---
+
+17. ERROR HANDLING
+
+Handle:
+
+- Microphone permission denial.
+- Microphone unavailable.
+- Internet disconnection.
+- WebSocket connection timeout.
+- Authentication failure.
+- Invalid Gemini model.
+- API quota exceeded.
+- Session expiration.
+- Unexpected server response.
+- Audio recording initialization failure.
+- Audio playback failure.
+- Audio focus loss.
+- Device disconnection.
+- Application backgrounding.
+- Coroutine cancellation.
+- Stale AI responses.
+
+Display user-friendly error messages and appropriate retry actions.
+
+Do not expose internal stack traces or API credentials.
+
+Do not treat coroutine cancellation as an application error.
+
+Do not leave the UI stuck in Connecting, Thinking, or Speaking after an operation has failed.
+
+---
+
+18. TESTING AND ACCEPTANCE SCENARIOS
+
+Audio controls
+
+1. Verify increased AI audio volume.
+2. Start microphone recording.
+3. Stop recording.
+4. Verify microphone stops immediately.
+5. Verify AI playback stops immediately.
+6. Verify old audio does not play after Stop.
+7. Verify Speak and Stop controls stay in fixed positions.
+8. Verify no removed controls remain in the UI.
+
+UI
+
+1. Verify the redesigned assistant looks consistent with FoodFlow.
+2. Verify no duplicate restaurant recommendations.
+3. Verify no duplicate food recommendations.
+4. Verify structured result rendering.
+5. Verify proper status indicators.
+6. Verify foreground result cards are not hidden behind the bottom sheet.
+7. Verify no clipping or overlapping content.
+
+Bottom sheet
+
+1. Open assistant.
+2. Drag from 70% to 50%.
+3. Drag from 50% to expanded.
+4. Drag down to collapsed.
+5. Navigate to restaurant details while the sheet is open.
+6. Verify assistant remains available.
+7. Verify conversation context remains intact.
+8. Verify no duplicate sheet exists.
+9. Verify foreground result cards display correctly.
+
+Keyboard
+
+1. Open assistant.
+2. Tap text input.
+3. Verify keyboard does not overlap input.
+4. Send a text request.
+5. Scroll response content.
+6. Close keyboard.
+7. Verify sheet position remains correct.
+
+Conversation
+
+1. Send a voice request.
+2. Verify latest request appears.
+3. Verify processing status appears.
+4. Verify AI response is displayed.
+5. Verify AI response audio plays.
+6. Send another request.
+7. Verify latest request and response are visible.
+8. Scroll upward to inspect previous messages.
+9. Verify no duplicated content.
+
+---
+
+19. IMPLEMENTATION PROCESS
+
+Phase 1 – Inspect
+
+First inspect the current implementation and identify the exact causes of:
+
+- Low audio volume.
+- Non-functional audio controls.
+- Icon position shifting.
+- Bottom-sheet dismissal during navigation.
+- Non-draggable bottom sheet.
+- Keyboard overlapping input.
+- Missing processing indicators.
+- Duplicate response rendering.
+- Restaurant/food cards overlapping with bottom-sheet content.
+- Incorrect z-order and clipping.
+
+Do not guess at root causes.
+
+Phase 2 – Fix functionality
+
+Fix the underlying shared state, audio managers, playback pipeline, lifecycle handling, and bottom-sheet ownership before polishing the UI.
+
+Phase 3 – UI redesign
+
+Implement the premium assistant UI while preserving the FoodFlow theme.
+
+Phase 4 – Test
+
+Compile the application and run relevant tests.
+
+Verify actual button behavior, audio behavior, navigation persistence, foreground result presentation, keyboard behavior, and bottom-sheet gestures.
+
+Phase 5 – Final report
+
+Provide:
+
+1. Root cause of each existing issue.
+2. Exact files modified.
+3. New files created.
+4. Explanation of the new UI structure.
+5. Audio volume and playback improvements.
+6. Speak and Stop implementation details.
+7. Bottom-sheet persistence and drag implementation.
+8. Foreground result layering improvements.
+9. Keyboard handling changes.
+10. Test results.
+11. Any remaining limitations.
+
+---
+
+FINAL ACCEPTANCE CRITERIA
+
+The implementation is complete only when:
+
+- The AI voice response is clearly audible.
+- Only Speak and Stop primary audio controls are displayed.
+- Speak actually starts voice interaction.
+- Stop actually stops recording, transmission, and playback.
+- Speak and Stop controls never shift position.
+- The assistant shows meaningful connection and processing statuses.
+- Restaurant and food recommendations are not duplicated.
+- Result cards are properly displayed in the foreground.
+- Bottom-sheet content never unintentionally overlaps other content.
+- The bottom sheet is draggable and supports approximately 50% and 70% positions.
+- The assistant remains available across screen navigation.
+- Conversation context is preserved.
+- The keyboard never hides the text input.
+- The latest interaction is visible by default.
+- No ANR, memory leak, or unbounded audio buffering is introduced.
+- Existing FoodFlow functionality remains intact.
+
+MOST IMPORTANT INSTRUCTION
+
+First understand the existing implementation and identify the actual causes of all reported issues.
+
+Prioritize functional correctness before visual polish.
+
+Do not create placeholder controls.
+
+Do not simply change icons without implementing their actual behavior.
+
+Do not display duplicate content.
+
+Do not allow restaurant or food result cards to be hidden behind the assistant bottom sheet.
+
+Do not destroy the shared assistant session during navigation.
+
+The final result must be a premium, compact, responsive, globally available AI food assistant with only two primary audio controls (Speak and Stop), reliable audio playback, clear processing feedback, a persistent draggable bottom sheet, correct foreground content layering, and proper keyboard handling.
+
+Every visible control must perform its advertised action, and every interaction must have a clearly defined state transition.

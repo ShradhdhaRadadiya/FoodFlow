@@ -1,0 +1,6 @@
+{
+  "name": "FoodFlow",
+  "description": "Offline-first Indian food delivery Android app built with Clean Architecture, MVI, Jetpack Compose, Room, Hilt, WorkManager, and simulated real-time WebSocket tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

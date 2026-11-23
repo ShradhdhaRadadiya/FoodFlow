@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Top finial knob of culinary cloche -->
+    <path
+        android:fillColor="#A7F3D0"
+        android:pathData="M54,32.5 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+    <!-- Cloche dome arc (within adaptive icon 66dp safe zone) -->
+    <path
+        android:pathData="M29,62 C29,44.5 40,36 54,36 C68,36 79,44.5 79,62 Z"
+        android:strokeWidth="4.6"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- Botanical freshness leaf inside dome -->
+    <path
+        android:fillColor="#A7F3D0"
+        android:pathData="M48,55.5 Q50,45.5 61.5,46.5 Q59,56.5 48,55.5 Z" />
+    <!-- Platter tray bar -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M25,65.5 L83,65.5 A3,3 0 0,1 86,68.5 L86,69.5 A3,3 0 0,1 83,72.5 L25,72.5 A3,3 0 0,1 22,69.5 L22,68.5 A3,3 0 0,1 25,65.5 Z" />
+    <!-- Delivery flow speed wave -->
+    <path
+        android:pathData="M31,79 Q54,73.5 77,79"
+        android:strokeWidth="4"
+        android:strokeColor="#A7F3D0"
+        android:strokeLineCap="round" />
+</vector>

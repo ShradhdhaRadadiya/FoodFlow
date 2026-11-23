@@ -1,0 +1,1088 @@
+Complete Application Technical Documentation & Architecture Guide
+
+I want you to thoroughly analyze my entire existing FoodFlow Android application and create a comprehensive technical documentation document.
+
+The purpose of this documentation is to help me explain the complete application to other Android developers, backend developers, QA engineers, architects, technical leads, and interviewers.
+
+I want someone who has never seen this project to read the documentation and understand:
+
+- What the application does.
+- How the application is structured.
+- Which technologies and architectural patterns are used.
+- How every feature works.
+- Where application data comes from.
+- How APIs are called.
+- How data is stored in the database.
+- How data flows between UI, ViewModel, Use Cases, Repository, API, and Room.
+- How data synchronization works.
+- How offline and online scenarios are handled.
+- How authentication, errors, loading states, and application lifecycle are managed.
+- How to add a new feature following the existing architecture.
+
+This is a documentation task. Do not modify the application's source code, business logic, database, API implementation, or UI.
+
+First investigate the entire project, then prepare accurate documentation based on the actual implementation.
+
+---
+
+1. Complete Project Investigation
+
+Before writing documentation, inspect the complete Android project.
+
+Analyze:
+
+- Project-level Gradle files.
+- App-level Gradle files.
+- All Gradle modules.
+- Package structure.
+- AndroidManifest.xml.
+- Application class.
+- Main Activity.
+- Navigation implementation.
+- Dependency injection configuration.
+- Presentation layer.
+- Domain layer.
+- Data layer.
+- Room database.
+- DAO interfaces.
+- Entity classes.
+- Mapper classes.
+- Repository interfaces.
+- Repository implementations.
+- Use cases.
+- ViewModels.
+- UI state, intents, and events.
+- Retrofit/API implementation.
+- Network configuration.
+- Authentication and token handling.
+- Local storage.
+- Preferences/DataStore, if present.
+- WorkManager, if present.
+- AI integration.
+- Audio and voice assistant implementation.
+- Location services.
+- Image loading and caching.
+- Pagination.
+- Error-handling mechanisms.
+- Logging and analytics.
+- Unit tests and integration tests.
+
+Do not rely only on file names. Read the actual implementations and follow the references between classes.
+
+Identify which functionality is:
+
+1. Fully implemented.
+2. Partially implemented.
+3. Mock-based.
+4. Local database-based.
+5. API-based.
+6. Simulated for demonstration.
+7. Not implemented.
+
+Never assume that a feature is connected to a real backend simply because an API interface or repository exists.
+
+---
+
+2. Project Overview and Technology Stack
+
+Document the application at a high level.
+
+Include:
+
+- Application purpose.
+- Main business requirements.
+- Target users.
+- Major features.
+- Overall architecture.
+- Programming language.
+- UI framework.
+- Dependency injection.
+- Networking.
+- Database.
+- Asynchronous programming.
+- State management.
+- Navigation.
+- Background processing.
+- AI integration.
+- Location integration.
+- Image and media handling.
+- Testing framework.
+
+Create a technology table:
+
+Technology| Purpose| Where Used| Why Used
+
+Use the actual dependencies found in the Gradle files.
+
+For every dependency, explain its role in the application. Do not add libraries that are not present.
+
+---
+
+3. Complete Project Package and Folder Structure
+
+Provide the actual project folder structure.
+
+Explain the responsibility of every important package and folder.
+
+For example, if the project follows Clean Architecture, explain:
+
+Presentation Layer
+
+- Screens
+- Composables
+- ViewModels
+- UI States
+- Intents
+- Events
+- Navigation
+- Reusable UI components
+
+Domain Layer
+
+- Domain models
+- Repository interfaces
+- Use cases
+- Business rules
+
+Data Layer
+
+- Repository implementations
+- API services
+- DTOs
+- Room entities
+- DAO interfaces
+- Database
+- Mappers
+- Local data sources
+- Remote data sources
+
+Explain the dependency direction and why the Domain layer should not depend on Android framework or Data layer implementation details.
+
+Include the actual package names and representative file names from the project.
+
+---
+
+4. Clean Architecture and MVI – Detailed Explanation
+
+Explain how Clean Architecture and MVI are implemented in FoodFlow.
+
+Clean Architecture
+
+Explain:
+
+- Presentation layer responsibilities.
+- Domain layer responsibilities.
+- Data layer responsibilities.
+- Dependency inversion.
+- Repository pattern.
+- Use case pattern.
+- Separation of concerns.
+
+Show an architecture diagram using Mermaid.
+
+MVI Architecture
+
+Explain the complete MVI flow:
+
+1. User performs an action.
+2. UI sends an Intent.
+3. ViewModel receives the Intent.
+4. ViewModel invokes the appropriate Use Case.
+5. Use Case calls the Repository.
+6. Repository retrieves data from API or database.
+7. Result is returned through Flow or another existing mechanism.
+8. ViewModel updates UI State.
+9. Compose observes the updated StateFlow.
+10. UI recomposes and displays the result.
+
+Explain the actual implementation of:
+
+- UI State.
+- Intent.
+- Event.
+- StateFlow.
+- SharedFlow or Channel, if used.
+- Loading state.
+- Success state.
+- Error state.
+- One-time UI events.
+- Lifecycle-aware collection.
+
+Include a practical example from an existing FoodFlow feature.
+
+Do not describe an ideal architecture as though it already exists. Clearly distinguish existing implementation from recommended improvements.
+
+---
+
+5. Complete Application Feature Documentation
+
+Document every feature and screen in the application.
+
+At a minimum, investigate the following features where they exist:
+
+1. Splash screen.
+2. Login and registration.
+3. Home dashboard.
+4. Restaurant listing.
+5. Restaurant details.
+6. Food/menu listing.
+7. Food search.
+8. Categories and filters.
+9. Favorites.
+10. Cart.
+11. Cooking instructions/custom notes.
+12. Tip selection.
+13. Checkout.
+14. Payment.
+15. Schedule Order.
+16. Order placement.
+17. Active orders.
+18. Scheduled orders.
+19. Completed orders.
+20. Cancelled orders.
+21. Order tracking.
+22. Delivery partner details.
+23. Profile.
+24. Address management.
+25. GPS/current location.
+26. Reviews and ratings.
+27. AI Food Assistant.
+28. AI text chat.
+29. AI voice assistant.
+30. Offline and connectivity handling.
+
+For each feature, explain:
+
+A. Feature Overview
+
+- What the feature does.
+- User interaction.
+- Business purpose.
+
+B. UI Implementation
+
+- Screen and Composable names.
+- ViewModel.
+- UI State.
+- User actions and intents.
+
+C. Business Logic
+
+- Use cases involved.
+- Validation.
+- Business rules.
+- Repository methods.
+
+D. Data Handling
+
+- Source of data.
+- API endpoint or local database query.
+- DTO or Entity.
+- Mapper.
+- Domain model.
+- Data returned to the UI.
+
+E. Error and Edge Cases
+
+- Loading.
+- Empty state.
+- API failure.
+- Database failure.
+- No internet.
+- Invalid input.
+- Duplicate requests.
+- Application restart.
+
+F. Complete Execution Flow
+
+Explain exactly how the feature works from the user's tap to the final UI update.
+
+Include actual class and method names wherever possible.
+
+---
+
+6. API Architecture and Network Communication
+
+This is one of the most important sections.
+
+Inspect the actual networking implementation and document every API integration.
+
+For each API, provide:
+
+Field| Details
+Feature| Feature using the API
+API service| Actual Retrofit service/interface
+Method| GET / POST / PUT / PATCH / DELETE
+Endpoint| Actual endpoint path
+Request DTO| Actual request model
+Response DTO| Actual response model
+Headers| Required headers
+Authentication| Token requirements
+Repository| Repository invoking the API
+Use Case| Use case calling the repository
+ViewModel| ViewModel triggering the operation
+Error handling| Actual error-handling behavior
+
+Include actual endpoint paths and request/response field names when available.
+
+Explain the networking flow
+
+Document:
+
+- Retrofit configuration.
+- OkHttp configuration.
+- Interceptors.
+- Authentication headers.
+- Token injection.
+- Token refresh, if implemented.
+- JSON serialization.
+- Request timeout.
+- Response parsing.
+- HTTP status-code handling.
+- Error response conversion.
+- Network exceptions.
+- Retry behavior.
+- Logging and security.
+
+API examples
+
+For important APIs, provide sanitized example requests and responses.
+
+For example:
+
+- Login.
+- Restaurant listing.
+- Restaurant details.
+- Menu listing.
+- Search.
+- Cart operations, if remote.
+- Order placement.
+- Order history.
+- Order tracking.
+- Schedule Order.
+- Reviews.
+- Location-related requests.
+- AI requests.
+
+Use actual API definitions from the code.
+
+Never invent endpoint URLs, request parameters, response fields, or backend behavior.
+
+If the application uses mock data for a particular feature, explicitly write:
+
+"Currently implemented using mock/local data. No verified production API integration was found."
+
+Do not expose API keys, passwords, access tokens, private URLs, or other secrets in the documentation.
+
+---
+
+7. Database Architecture – Room
+
+Document the entire local database implementation.
+
+Include:
+
+- Database class.
+- Database name.
+- Database version.
+- Registered entities.
+- DAO interfaces.
+- Database relationships.
+- Primary keys.
+- Foreign keys.
+- Indices.
+- Type converters.
+- Database migrations.
+- Transaction handling.
+- Insert/update/delete operations.
+- Flow-based queries.
+- Database initialization.
+
+For every Entity, provide:
+
+Entity| Table Name| Primary Key| Important Fields| Purpose
+
+For every DAO, explain:
+
+- Queries.
+- Insert operations.
+- Update operations.
+- Delete operations.
+- Observed Flow queries.
+- Transactions.
+- Relationships with other tables.
+
+Explain actual data persistence
+
+For example, investigate whether:
+
+- Cart data persists after application restart.
+- User profile data is stored locally.
+- Restaurant and menu data are cached.
+- Orders are stored locally.
+- Scheduled orders are persisted.
+- Reviews are stored locally.
+- AI conversation history is stored.
+- Favorites survive application restart.
+
+Do not assume persistence simply because an Entity exists. Verify the actual read/write implementation.
+
+Include a database relationship diagram using Mermaid ER diagram syntax.
+
+---
+
+8. Data Fetching – Complete End-to-End Explanation
+
+Explain exactly how data is fetched in FoodFlow.
+
+Cover all existing data sources:
+
+- Remote API.
+- Room database.
+- Static mock data.
+- In-memory state.
+- DataStore or SharedPreferences.
+- External SDKs.
+- AI service responses.
+- Device services such as GPS.
+
+Explain how the application decides which source to use.
+
+For every major feature, explain:
+
+1. Where the initial data comes from.
+2. Which layer requests it.
+3. Whether data is fetched from an API or database.
+4. Whether the data is transformed using a Mapper.
+5. Whether the result is cached.
+6. How the UI receives updates.
+7. What happens when fetching fails.
+8. What happens when the application restarts.
+
+Include a source-of-truth table:
+
+Data| Source of Truth| Local Storage| Remote Source| Update Mechanism
+
+If no explicit source-of-truth strategy exists, clearly document that.
+
+---
+
+9. Data Synchronization and Offline Support
+
+Explain how local and remote data synchronization currently works.
+
+Investigate:
+
+- Whether Room is used as a cache.
+- Whether API responses are saved into Room.
+- Whether the UI observes Room using Flow.
+- Whether local changes are sent to the backend.
+- Whether WorkManager is used.
+- Whether pending operations are queued.
+- Whether retry mechanisms exist.
+- Whether duplicate requests are prevented.
+- Whether conflict resolution exists.
+- Whether data refresh occurs on app launch.
+- Whether connectivity changes trigger refresh.
+- Whether stale data is displayed offline.
+
+Explain the difference between:
+
+Online flow
+
+User action → API request → response → local persistence, if implemented → UI update.
+
+Offline flow
+
+User action → local database/cache → UI update, if supported.
+
+Reconnection flow
+
+Network restored → pending synchronization, if implemented → refresh or update UI.
+
+Create a Mermaid sequence diagram for the actual synchronization flow.
+
+If synchronization is not implemented for a feature, state that explicitly.
+
+Do not claim that WorkManager guarantees immediate execution. Explain its scheduling limitations where relevant.
+
+Also document whether the current app uses:
+
+- Network-first strategy.
+- Cache-first strategy.
+- Stale-while-revalidate.
+- Local-first strategy.
+- No formal synchronization strategy.
+
+---
+
+10. Pagination and Large Dataset Handling
+
+Document the existing pagination implementation.
+
+Explain:
+
+- Whether pagination is API-driven or local/mock-based.
+- Whether it uses page numbers, offsets, or cursors.
+- Initial page size.
+- Next-page loading trigger.
+- Loading indicators.
+- Error and retry handling.
+- Duplicate prevention.
+- End-of-list handling.
+- Stable LazyColumn keys.
+- "contentType".
+- Scroll state preservation.
+- Recomposition considerations.
+
+Explain the distinction between:
+
+- Compose lazy rendering.
+- Loading data in batches.
+- Server-side pagination.
+
+If the application uses LazyColumn with ViewModel-managed batch loading rather than Paging 3, document that accurately.
+
+Include a sequence diagram showing how scrolling triggers the next batch.
+
+---
+
+11. Cart, Checkout, Payment, and Order Lifecycle
+
+Explain the complete ordering workflow.
+
+Document:
+
+1. Selecting a restaurant.
+2. Opening the restaurant menu.
+3. Selecting food items.
+4. Adding items to cart.
+5. Updating quantities.
+6. Removing items.
+7. Adding cooking instructions.
+8. Applying tips.
+9. Calculating subtotal.
+10. Taxes, fees, and discounts, if implemented.
+11. Selecting an address.
+12. Selecting payment method.
+13. Placing the order.
+14. Saving order details.
+15. Displaying order history.
+16. Tracking the order.
+
+Explain where every amount is calculated and which layer owns that calculation.
+
+Order lifecycle
+
+Document the actual order statuses and transitions.
+
+For example, if implemented:
+
+SCHEDULED → PLACING_ORDER → PLACED → RESTAURANT_ACCEPTED → PREPARING → READY_FOR_PICKUP → OUT_FOR_DELIVERY → DELIVERED.
+
+Also document:
+
+- CANCELLED.
+- FAILED.
+- Payment pending.
+- Payment successful.
+- Payment failed.
+
+Do not assume these statuses are all implemented.
+
+Explain how order status updates reach the UI:
+
+- REST API polling.
+- WebSocket.
+- Firebase.
+- Local mock updates.
+- Other mechanisms.
+
+Clearly identify the actual implementation.
+
+Schedule Order
+
+Explain:
+
+- How the scheduled date and time are selected.
+- Whether the selected time represents order placement or delivery.
+- How scheduled orders are stored.
+- Whether the backend schedules execution.
+- Whether WorkManager is used.
+- Whether the order appears in history immediately.
+- What happens if the app is closed or the device is offline.
+- How cancellation and rescheduling work.
+
+Clearly distinguish production backend scheduling from local/demo simulation.
+
+---
+
+12. Authentication and Security
+
+Document:
+
+- Login flow.
+- Registration flow.
+- OTP verification, if implemented.
+- Token generation.
+- Token storage.
+- Token retrieval.
+- Authorization headers.
+- Token expiration.
+- Refresh-token handling.
+- Logout.
+- Session persistence.
+- Protected API requests.
+
+Explain whether credentials and tokens are stored securely.
+
+Investigate:
+
+- Android Keystore.
+- EncryptedSharedPreferences, if present.
+- DataStore.
+- Plain SharedPreferences.
+- Hardcoded API keys.
+- BuildConfig secrets.
+- Network security configuration.
+- HTTPS usage.
+
+Never reproduce real secrets in documentation.
+
+Identify any security risks and distinguish confirmed issues from recommendations.
+
+---
+
+13. AI Food Assistant – Complete Architecture
+
+Document the AI Food Assistant in detail.
+
+Cover:
+
+- AI provider and model configuration.
+- API integration.
+- Prompt construction.
+- Request and response models.
+- Conversation history.
+- Context management.
+- Restaurant and food recommendation flow.
+- Menu data validation.
+- Adding items to cart through existing business logic.
+- Text chat.
+- Voice interaction.
+- Audio recording.
+- Audio playback.
+- Speech-to-text.
+- Text-to-speech.
+- WebSocket or streaming, if implemented.
+- Session lifecycle.
+- Permission handling.
+- Network errors.
+- API quota handling.
+- Offline behavior.
+
+Explain how AI-generated recommendations are validated against actual FoodFlow restaurant and menu data.
+
+Document how the AI interacts with the application's business logic.
+
+Clarify whether the assistant uses:
+
+- Real backend data.
+- Local mock data.
+- Direct AI-generated recommendations.
+- A combination.
+
+Explain how text-based chat and voice-based chat are separated.
+
+Never expose API keys or authentication secrets.
+
+---
+
+14. GPS and Location Architecture
+
+Document the location functionality.
+
+Include:
+
+- Location permissions.
+- FusedLocationProviderClient, if used.
+- Current location retrieval.
+- Reverse geocoding.
+- Address selection.
+- Manual address entry.
+- Location storage.
+- Restaurant discovery based on location.
+- Permission denied handling.
+- GPS disabled handling.
+- Approximate versus precise location.
+- Location timeout.
+- Offline behavior.
+
+Explain whether the current implementation uses actual device coordinates or mock location data.
+
+Clearly document any backend location APIs and how coordinates are passed.
+
+---
+
+15. Background Tasks and Application Lifecycle
+
+Investigate and explain:
+
+- WorkManager.
+- Workers.
+- Periodic tasks.
+- Scheduled tasks.
+- Background synchronization.
+- Application startup.
+- Activity lifecycle.
+- ViewModel lifecycle.
+- Navigation lifecycle.
+- Coroutine cancellation.
+- Process death.
+- App restart.
+- Background/foreground behavior.
+
+Explain what happens when:
+
+- User backgrounds the app.
+- User force-stops the app.
+- Device restarts.
+- Network becomes unavailable.
+- Network becomes available again.
+- Application process is killed.
+
+Do not claim background tasks are guaranteed to execute at an exact time.
+
+---
+
+16. Navigation and Application Flow
+
+Document:
+
+- Navigation architecture.
+- Navigation graph.
+- Routes.
+- Arguments.
+- Deep links, if implemented.
+- Bottom navigation.
+- Back-stack management.
+- Screen state preservation.
+- Navigation from AI assistant.
+- Navigation from notifications, if implemented.
+
+Create an application navigation flow diagram using Mermaid.
+
+---
+
+17. Error Handling, Logging, and Monitoring
+
+Explain how the application handles:
+
+- Network failures.
+- HTTP errors.
+- Parsing failures.
+- Database errors.
+- Authentication failures.
+- Empty responses.
+- Invalid user inputs.
+- Payment failures.
+- AI failures.
+- Audio failures.
+- Location permission failures.
+
+Document:
+
+- Result wrappers.
+- Exceptions.
+- UI error states.
+- Retry mechanisms.
+- Logging.
+- Crash reporting.
+- Analytics.
+- Monitoring.
+
+Clearly separate implemented behavior from recommended improvements.
+
+---
+
+18. UI Performance and Compose Best Practices
+
+Document how the application handles:
+
+- Recomposition.
+- Stable keys.
+- LazyColumn and LazyVerticalGrid.
+- Pagination.
+- State hoisting.
+- remember and rememberSaveable.
+- StateFlow collection.
+- Lifecycle-aware state collection.
+- Image loading.
+- Animation performance.
+- Large lists.
+- Keyboard insets.
+- Bottom sheet behavior.
+- Memory management.
+
+Identify actual performance concerns found in the source code.
+
+Provide practical examples from existing FoodFlow Composables.
+
+---
+
+19. Dependency Injection and Application Startup
+
+Explain:
+
+- Hilt setup.
+- Application class.
+- Modules.
+- Providers.
+- Binds.
+- Singleton dependencies.
+- ViewModel injection.
+- Repository injection.
+- Use case injection.
+- Retrofit injection.
+- Database injection.
+- DAO injection.
+
+Create a dependency flow diagram.
+
+Explain what happens from application launch until the first screen appears.
+
+---
+
+20. Testing Strategy
+
+Document existing testing infrastructure.
+
+Include:
+
+- Unit tests.
+- ViewModel tests.
+- Use case tests.
+- Repository tests.
+- DAO tests.
+- API tests.
+- Compose UI tests.
+- Integration tests.
+- Mocking strategy.
+
+For each major feature, explain what should be tested and identify which tests already exist.
+
+Do not claim a test has passed unless it has actually been executed.
+
+---
+
+21. How to Add a New Feature – Developer Guide
+
+Create a practical step-by-step guide explaining how another developer should implement a new feature in FoodFlow.
+
+For example, demonstrate how to add a new feature called "Restaurant Offers".
+
+Explain the required steps:
+
+1. Create domain model.
+2. Create repository interface.
+3. Create use case.
+4. Create DTO.
+5. Create API service method.
+6. Create mapper.
+7. Create repository implementation.
+8. Register dependencies with Hilt.
+9. Create UI state.
+10. Create intents/events.
+11. Create ViewModel.
+12. Create Compose screen.
+13. Register navigation.
+14. Add database support if needed.
+15. Write tests.
+
+Use actual project conventions and existing examples.
+
+Do not modify the project to add this sample feature. It is only a documentation example.
+
+---
+
+22. Important Architecture and Technical Diagrams
+
+Create Mermaid diagrams for:
+
+1. Overall application architecture.
+2. Clean Architecture layers.
+3. MVI data flow.
+4. API request/response flow.
+5. Room database interaction.
+6. Data synchronization.
+7. Restaurant and menu pagination.
+8. Authentication flow.
+9. Cart-to-checkout flow.
+10. Order lifecycle.
+11. Schedule Order lifecycle.
+12. AI text and voice assistant flow.
+13. GPS/location flow.
+14. Hilt dependency injection.
+15. Application startup and navigation.
+
+Every diagram must represent the actual implementation.
+
+If a feature is not implemented, label the missing part rather than drawing an imaginary flow.
+
+---
+
+23. Developer Onboarding and Team Explanation Guide
+
+Add a separate section that helps me explain FoodFlow in a technical team meeting.
+
+Prepare:
+
+A. 2-Minute Application Overview
+
+A short explanation of what FoodFlow is and how it works.
+
+B. 5-Minute Architecture Explanation
+
+Explain Clean Architecture, MVI, dependency injection, networking, and Room.
+
+C. 15-Minute Technical Walkthrough
+
+Explain one complete user journey from restaurant discovery to order tracking.
+
+D. Developer Onboarding Checklist
+
+List the files, packages, and concepts a new developer should understand first.
+
+E. Important Classes and Entry Points
+
+Create a table:
+
+Class/File| Responsibility| Why It Is Important
+
+F. Technical Interview and Team Discussion Questions
+
+Prepare relevant questions and answers about:
+
+- Why Clean Architecture?
+- Why MVI?
+- Why StateFlow?
+- Why separate use cases?
+- Why repository interfaces?
+- How is API data handled?
+- How does Room work?
+- How does synchronization work?
+- How does pagination work?
+- How are duplicate order requests prevented?
+- How are order statuses updated?
+- How does Schedule Order work?
+- How does the AI assistant work?
+- How are voice sessions managed?
+- How is offline support handled?
+- How is dependency injection configured?
+
+Answers must be based on the actual FoodFlow implementation. If something is not implemented, explain what the current application does and what production implementation would require.
+
+---
+
+24. Documentation Output Format
+
+Create a complete, professionally structured documentation document.
+
+Preferred output:
+
+"FoodFlow_Technical_Architecture_and_Developer_Guide.md"
+
+If the environment supports generating a DOCX or PDF, also provide a professionally formatted version.
+
+The document must contain:
+
+- Cover page/title.
+- Version and documentation date.
+- Table of contents.
+- Project overview.
+- Architecture.
+- Technology stack.
+- Folder structure.
+- Feature documentation.
+- API documentation.
+- Database documentation.
+- Data flow.
+- Synchronization.
+- Offline handling.
+- Security.
+- AI architecture.
+- GPS.
+- Navigation.
+- Background processing.
+- Error handling.
+- Performance.
+- Testing.
+- Developer onboarding.
+- Technical interview questions.
+- Glossary.
+
+Use:
+
+- Clear headings.
+- Tables.
+- Mermaid diagrams.
+- Code examples.
+- Actual class names.
+- Actual method names.
+- Actual API paths where safe.
+- Practical examples.
+
+Write in clear professional English so Android developers and non-Android technical stakeholders can understand it.
+
+Avoid vague explanations and generic textbook content.
+
+---
+
+25. Accuracy Rules – Extremely Important
+
+1. Analyze the actual source code before documenting.
+2. Do not invent APIs or backend integrations.
+3. Do not assume mock data is real server data.
+4. Do not assume Room is synchronized with a backend.
+5. Do not assume WorkManager is used for guaranteed scheduling.
+6. Do not assume WebSocket is used for order tracking.
+7. Do not assume payment integration exists unless verified.
+8. Do not expose credentials or secrets.
+9. Do not document intended behavior as implemented behavior.
+10. Mention incomplete and partially implemented features.
+11. Reference actual files and classes.
+12. Use actual method and property names.
+13. Explain the complete data flow, not just the architecture concept.
+14. Do not modify application source code.
+
+For any information that cannot be verified from the repository, label it clearly as:
+
+- Not found in source code.
+- Not implemented.
+- Cannot be verified.
+- Requires backend confirmation.
+- Recommended future implementation.
+
+---
+
+26. Final Review Before Delivering Documentation
+
+Before generating the final document:
+
+- Cross-check all documented classes against the source code.
+- Verify API endpoints and models.
+- Verify all Room entities and DAO methods.
+- Verify repository and use case relationships.
+- Verify ViewModel and UI state flows.
+- Verify actual data sources.
+- Verify local and remote synchronization.
+- Verify pagination behavior.
+- Verify order and schedule lifecycle.
+- Verify AI and voice architecture.
+- Verify permissions and location handling.
+- Verify diagrams against implementation.
+- Remove duplicate or contradictory explanations.
+
+Finally, provide a summary of the investigation, documentation files generated, major architectural findings, incomplete areas, and any backend questions that need clarification.
+
+The final result should be a complete technical reference for the entire FoodFlow application—not merely a high-level overview or a collection of screen descriptions. A new developer should be able to understand the application and trace any important feature from the UI to its final data source and back.
